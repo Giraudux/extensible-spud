@@ -1,6 +1,9 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,26 +15,42 @@ import java.util.Set;
 public class Platform {
 
     private static Platform instance;
-    private static Map<String, Object> extensions;
+    private static Map<Description, Object> extensions;
     private static Set<Description> descriptions;
+    private static ClassLoader classLoader;
 
-    private Platform() {}
+    private Platform() {
+    }
 
     public Object loadExtension(Description description) throws Exception {
         if (extensions == null)
-            extensions = new HashMap<String, Object>();
-        else if (extensions.containsKey(description.getName())) {
-            return extensions.get(description.getName());
+            extensions = new HashMap<Description, Object>();
+        else if (extensions.containsKey(description)) {
+            return extensions.get(description);
         }
 
-        Class<?> afficheurClass = Class.forName(description.getName());
-        Object extension = afficheurClass.newInstance();
+        if(classLoader == null) {
+            URL url = new URL(".");
+            URL urls[] = {url};
+            classLoader = new URLClassLoader(urls);
+        }
+
+        Class<?> extensionClass = Class.forName(description.getName(), true, classLoader);
+
+        Object extension;
+        if (description.isProxy()) {
+            Class<?>[] interfaces = {extensionClass};
+
+            extension = Proxy.newProxyInstance(classLoader, interfaces, null /*new ProxyHandler(target)*/);
+        } else {
+            extension = extensionClass.newInstance();
+        }
 
         return extension;
     }
 
     public static Set<Description> getDescriptions() throws Exception {
-        if(descriptions == null) {
+        if (descriptions == null) {
             descriptions = new HashSet<Description>();
 
             BufferedReader br = new BufferedReader(new FileReader("afficheur.txt"));
