@@ -42,16 +42,22 @@ public class Platform {
 
         Class<?> extensionClass = Class.forName(description.getName(), true, classLoader);
 
-        Object extension;
+        Object extensionInstance = null;
         if (description.isProxy()) {
             Class<?>[] interfaces = {extensionClass};
-
-            extension = Proxy.newProxyInstance(classLoader, interfaces, null /*new ProxyHandler(target)*/);
+            extensionInstance = Proxy.newProxyInstance(classLoader, interfaces, new ProxyHandler(extensionClass, null));
         } else {
-            extension = extensionClass.newInstance();
+            if(description.isSingleton()) {
+                if(extensions.containsKey(description)) {
+                    extensionInstance = extensions.get(description);
+                }
+            } else {
+                extensionInstance = extensionClass.newInstance();
+                extensions.put(description, extensionInstance);
+            }
         }
 
-        return extension;
+        return extensionInstance;
     }
 
     public static Set<Description> getDescriptions() throws Exception {
