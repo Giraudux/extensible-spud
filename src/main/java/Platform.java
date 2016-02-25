@@ -1,9 +1,7 @@
 import java.io.*;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,6 +19,14 @@ public class Platform {
     private static ClassLoader classLoader;
 
     private Platform() {
+    }
+
+    public void autorun() throws Exception {
+        for (Description description : descriptions) {
+            if (description.isAutorun()) {
+                loadExtension(description);
+            }
+        }
     }
 
     public Object loadExtension(Description description) throws Exception {
@@ -54,7 +60,7 @@ public class Platform {
         return extensionInstance;
     }
 
-    public static Set<Description> getDescriptions() throws Exception {
+    public Set<Description> getDescriptions() throws Exception {
         if (descriptions == null) {
             descriptions = new HashSet<Description>();
 
@@ -84,7 +90,7 @@ public class Platform {
         return instance;
     }
 
-    public static Description Loader(String filePath) throws IOException {
+    private static Description Loader(String filePath) throws IOException {
         Description descList = new Description();
 
         try {
