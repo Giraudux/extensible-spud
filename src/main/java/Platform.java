@@ -1,8 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
@@ -28,10 +24,8 @@ public class Platform {
     }
 
     public Object loadExtension(Description description) throws Exception {
-        if (extensions == null)
+        if (extensions == null) {
             extensions = new HashMap<Description, Object>();
-        else if (extensions.containsKey(description)) {
-            return extensions.get(description);
         }
 
         if (classLoader == null) {
@@ -47,8 +41,8 @@ public class Platform {
             Class<?>[] interfaces = {extensionClass};
             extensionInstance = Proxy.newProxyInstance(classLoader, interfaces, new ProxyHandler(extensionClass, null));
         } else {
-            if(description.isSingleton()) {
-                if(extensions.containsKey(description)) {
+            if (description.isSingleton()) {
+                if (extensions.containsKey(description)) {
                     extensionInstance = extensions.get(description);
                 }
             } else {
@@ -64,35 +58,17 @@ public class Platform {
         if (descriptions == null) {
             descriptions = new HashSet<Description>();
 
-            BufferedReader br = new BufferedReader(new FileReader("afficheur.txt"));
-
-            String line;
-            Description description = new Description();
-            while ((line = br.readLine()) != null) {
-                if (line.isEmpty()) {
-                    if (description.getName() != null) {
-                        descriptions.add(description);
-                    }
-
-                    description = new Description();
-                }
-
-                String split[] = line.split(" = ");
-                String key = split[0];
-                String value = split[1];
-
-                for (Method m : Description.class.getMethods()) {
-                    if (m.getName().equals("set" + key)) {
-                        Class<?> parameterType = m.getParameterTypes()[0];
-                        if (parameterType.equals(String.class)) {
-                            m.invoke(description, value);
-                        } else if (parameterType.equals(Boolean.class)) {
-                            m.invoke(description, Boolean.parseBoolean(value));
-                        } else {
-                            throw new Exception("unknown parameter type: " + parameterType.getName());
+            File extensionsDirectory = new File(".");
+            if (extensionsDirectory.isDirectory()) {
+                File files[] = extensionsDirectory.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.isFile()) {
+                            Description description = Loader(file.getPath());
+                            if (description != null) {
+                                descriptions.add(description);
+                            }
                         }
-
-                        break;
                     }
                 }
             }
@@ -112,54 +88,31 @@ public class Platform {
         Description descList = new Description();
 
         try {
-
             FileInputStream fileInput = new FileInputStream(filePath);
             Properties properties = new Properties();
             properties.load(fileInput);
             fileInput.close();
 
-            Enumeration enuKeys = properties.keys();
-            while (enuKeys.hasMoreElements()) {
-                String key = (String) enuKeys.nextElement();
-                String value = (String) properties.getProperty(key);
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                String key = (String) entry.getKey();
+                String value = (String) entry.getValue();
 
                 if (key.equals("name")) {
                     descList.setName(value);
-
-                } else if (key.equals("description"))
+                } else if (key.equals("description")) {
                     descList.setDescription(value);
-
-
-                else if (key.equals("singleton")) {
-                    if (value.equals("true"))
-                        descList.setSingleton(true);
-
-
-                    else if (value.equals("false")) {
-                        descList.setSingleton(false);
-                        System.out.print(value);
-                    }
+                } else if (key.equals("singleton")) {
+                    descList.setSingleton(Boolean.parseBoolean(value));
                 } else if (key.equals("autorun")) {
-                    if (value.equals("true")) {
-                        descList.setAutorun(true);
-                        System.out.print(value);
-                    } else if (value.equals("false"))
-                        descList.setAutorun(false);
+                    descList.setAutorun(Boolean.parseBoolean(value));
                 } else if (key.equals("proxy")) {
-                    if (value.equals("true"))
-                        descList.setProxy(true);
-                    else if (value.equals("false"))
-                        descList.setProxy(false);
+                    descList.setProxy(Boolean.parseBoolean(value));
                 }
-
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return null;
         }
 
         return descList;
     }
-
 }
