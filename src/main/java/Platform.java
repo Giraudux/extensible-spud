@@ -1,12 +1,17 @@
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -96,4 +101,61 @@ public class Platform {
 
         return instance;
     }
+    
+    public static	Description Loader(String filePath) throws IOException{
+		Description descList= new Description();
+	
+		try {
+			
+			FileInputStream fileInput = new FileInputStream(filePath);
+			Properties properties = new Properties();
+			properties.load(fileInput);
+			fileInput.close();
+
+			Enumeration enuKeys = properties.keys();
+			while (enuKeys.hasMoreElements()) {
+				String key = (String) enuKeys.nextElement();
+				String value = (String)properties.getProperty(key);
+				
+				if(key.equals("name")){
+						descList.setName(value);
+						
+				}
+				else if(key.equals("description"))
+						descList.setDescription(value);
+						
+				
+				else if(key.equals("singleton")){
+					if(value=="true")
+						descList.setSingleton(true);
+					
+					
+					else if(value.equals("false")){
+						descList.setSingleton(false);
+						System.out.print(value);}
+				}
+				else if(key.equals("autorun")){
+					if(value=="true"){
+						descList.setAutorun(true);
+					System.out.print(value);}
+					else if(value=="false")
+						descList.setAutorun(false);
+				}
+				else if(key.equals("proxy")){
+					if(value=="true")
+						descList.setProxy(true);
+					else if(value=="false")
+						descList.setProxy(false);
+				}
+				
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();	
+	}
+		
+		return descList;
+	}
+    
 }
