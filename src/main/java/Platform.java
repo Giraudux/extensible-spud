@@ -35,7 +35,7 @@ public class Platform {
         }
 
         if (classLoader == null) {
-            URL url = new URL("extensions");
+            URL url = new URL("file://extensions");
             URL urls[] = {url};
             classLoader = new URLClassLoader(urls);
         }
