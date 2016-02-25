@@ -22,7 +22,7 @@ public class Platform {
     }
 
     public void autorun() throws Exception {
-        for (Description description : descriptions) {
+        for (Description description : getDescriptions()) {
             if (description.isAutorun()) {
                 loadExtension(description);
             }
@@ -35,7 +35,7 @@ public class Platform {
         }
 
         if (classLoader == null) {
-            URL url = new URL(".");
+            URL url = new URL("extensions");
             URL urls[] = {url};
             classLoader = new URLClassLoader(urls);
         }
@@ -64,7 +64,7 @@ public class Platform {
         if (descriptions == null) {
             descriptions = new HashSet<Description>();
 
-            File extensionsDirectory = new File(".");
+            File extensionsDirectory = new File("descriptions");
             if (extensionsDirectory.isDirectory()) {
                 File files[] = extensionsDirectory.listFiles();
                 if (files != null) {
