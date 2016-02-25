@@ -1,0 +1,36 @@
+
+
+Standard de declaration d'extension(1 fichier par extension):
+Fichier .properties contenant les attributs suivants:
+
+-name (String) le nom de l'extension
+-classPath (String) le chemin ou se trouve l'extension
+-description (String) une description textuelle de l'extension
+-singleton (Boolean) définit si on instanciera la classe en mode singleton
+-autorun (Boolean) définit si on instancie immédiatemment, ou plus tard
+-proxy (Boolean) définit si on utilise un proxy
+
+
+Fichier de configuration de la Plateforme, contenant:
+- extensionsPath (String) le chemin ou la plateforme va trouver les fichiers de descriptions des extensions
+- entryPoint (String) le nom de l'extension principale, à charger en premier. (Correspond au main) 
+
+
+Pour tous les attributs de la classe description, des booléens précisent si la valeur est requise ou non.
+Si une valeur requise n'est pas présente, on ne charge pas(à implémenter):
+-isNameRequired (Boolean)
+-isDescriptionRequired (Boolean)
+-isSingletonRequired (Boolean)
+-isAutorunRequired (Boolean)
+-isProxyRequired (Boolean)
+
+Pour tous les attributs de la classe description, des valeurs par défaut sont définies. Si un attribut est requis, 
+la valeur par défaut est ignorée:
+
+-defaultClassPath (String) 
+-defaultDescription (String)
+-defaultSingleton (Boolean)
+-defaultAutorun (Boolean)
+-defaultProxy (Boolean)
+// A priori, il n'y a pas de nom d'extension par defaut, cela n'a pas forcement de sens.
+
