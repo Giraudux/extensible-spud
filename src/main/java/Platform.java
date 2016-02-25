@@ -34,7 +34,7 @@ public class Platform {
             return extensions.get(description);
         }
 
-        if(classLoader == null) {
+        if (classLoader == null) {
             URL url = new URL(".");
             URL urls[] = {url};
             classLoader = new URLClassLoader(urls);
@@ -101,61 +101,59 @@ public class Platform {
 
         return instance;
     }
-    
-    public static	Description Loader(String filePath) throws IOException{
-		Description descList= new Description();
-	
-		try {
-			
-			FileInputStream fileInput = new FileInputStream(filePath);
-			Properties properties = new Properties();
-			properties.load(fileInput);
-			fileInput.close();
 
-			Enumeration enuKeys = properties.keys();
-			while (enuKeys.hasMoreElements()) {
-				String key = (String) enuKeys.nextElement();
-				String value = (String)properties.getProperty(key);
-				
-				if(key.equals("name")){
-						descList.setName(value);
-						
-				}
-				else if(key.equals("description"))
-						descList.setDescription(value);
-						
-				
-				else if(key.equals("singleton")){
-					if(value=="true")
-						descList.setSingleton(true);
-					
-					
-					else if(value.equals("false")){
-						descList.setSingleton(false);
-						System.out.print(value);}
-				}
-				else if(key.equals("autorun")){
-					if(value=="true"){
-						descList.setAutorun(true);
-					System.out.print(value);}
-					else if(value=="false")
-						descList.setAutorun(false);
-				}
-				else if(key.equals("proxy")){
-					if(value=="true")
-						descList.setProxy(true);
-					else if(value=="false")
-						descList.setProxy(false);
-				}
-				
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();	
-	}
-		
-		return descList;
-	}
-    
+    public static Description Loader(String filePath) throws IOException {
+        Description descList = new Description();
+
+        try {
+
+            FileInputStream fileInput = new FileInputStream(filePath);
+            Properties properties = new Properties();
+            properties.load(fileInput);
+            fileInput.close();
+
+            Enumeration enuKeys = properties.keys();
+            while (enuKeys.hasMoreElements()) {
+                String key = (String) enuKeys.nextElement();
+                String value = (String) properties.getProperty(key);
+
+                if (key.equals("name")) {
+                    descList.setName(value);
+
+                } else if (key.equals("description"))
+                    descList.setDescription(value);
+
+
+                else if (key.equals("singleton")) {
+                    if (value.equals("true"))
+                        descList.setSingleton(true);
+
+
+                    else if (value.equals("false")) {
+                        descList.setSingleton(false);
+                        System.out.print(value);
+                    }
+                } else if (key.equals("autorun")) {
+                    if (value.equals("true")) {
+                        descList.setAutorun(true);
+                        System.out.print(value);
+                    } else if (value.equals("false"))
+                        descList.setAutorun(false);
+                } else if (key.equals("proxy")) {
+                    if (value.equals("true"))
+                        descList.setProxy(true);
+                    else if (value.equals("false"))
+                        descList.setProxy(false);
+                }
+
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return descList;
+    }
+
 }
