@@ -14,7 +14,7 @@ import java.util.Set;
 public class Platform {
 
     private static Platform instance;
-    private static Map<Description, Object> extensions;
+    private static Map<Description, Object> singletons;
     private static Set<Description> descriptions;
     private static ClassLoader classLoader;
 
@@ -30,8 +30,8 @@ public class Platform {
     }
 
     public Object loadExtension(Description description) throws Exception {
-        if (extensions == null) {
-            extensions = new HashMap<Description, Object>();
+        if (singletons == null) {
+            singletons = new HashMap<Description, Object>();
         }
 
         if (classLoader == null) {
@@ -48,12 +48,12 @@ public class Platform {
             extensionInstance = Proxy.newProxyInstance(classLoader, interfaces, new ProxyHandler(extensionClass, null));
         } else {
             if (description.isSingleton()) {
-                if (extensions.containsKey(description)) {
-                    extensionInstance = extensions.get(description);
+                if (singletons.containsKey(description)) {
+                    extensionInstance = singletons.get(description);
                 }
             } else {
                 extensionInstance = extensionClass.newInstance();
-                extensions.put(description, extensionInstance);
+                singletons.put(description, extensionInstance);
             }
         }
 
