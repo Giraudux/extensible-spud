@@ -1,3 +1,5 @@
+import java.util.Collection;
+
 
 /**
  *
@@ -8,7 +10,8 @@ public class Description {
     private boolean singleton;
     private boolean autorun;
     private boolean proxy;
-
+    private Collection<String> contributeTo;
+    
     public String getName() {
         return name;
     }
@@ -49,6 +52,14 @@ public class Description {
         this.proxy = proxy;
     }
 
+    public Collection<String> getContributeTo() {
+		return contributeTo;
+	}
+
+	public void setContributeTo(Collection<String> contributeTo) {
+		this.contributeTo = contributeTo;
+	}
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
