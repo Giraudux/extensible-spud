@@ -2,6 +2,7 @@ import java.io.*;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -113,6 +114,14 @@ public class Platform {
                     descList.setAutorun(Boolean.parseBoolean(value));
                 } else if (key.equals("proxy")) {
                     descList.setProxy(Boolean.parseBoolean(value));
+                } else if(key.equals("contributors")){
+                	Collection<String> col;
+                	String[] arrayS=value.split(", ", 0);
+                	for(int i=0;i<=arrayS.length ;i++){
+                		col.add(arrayS[i]);
+                		descList.setCollection(col);	
+                	}
+                	
                 }
             }
         } catch (Exception e) {
