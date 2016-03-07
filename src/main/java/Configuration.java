@@ -12,6 +12,7 @@ public class Configuration {
     private boolean singleDefault;
     private boolean autorunDefault;
     private boolean proxyDefault;
+    private boolean contributeRequired;
 
     public String getClassPath() {
         return classPath;
