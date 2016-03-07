@@ -12,11 +12,12 @@ import java.util.Set;
  *
  */
 public class Platform {
-
     private static Platform instance;
-    private static Map<Description, Object> singletons;
-    private static Set<Description> descriptions;
-    private static ClassLoader classLoader;
+
+    private Configuration configuration;
+    private Map<Description, Object> singletons;
+    private Set<Description> descriptions;
+    private ClassLoader classLoader;
 
     private Platform() {
     }
@@ -35,7 +36,7 @@ public class Platform {
         }
 
         if (classLoader == null) {
-            URL url = new URL("file://extensions");
+            URL url = new URL("file://extensions"/*configuration.getDescPath()*/);
             URL urls[] = {url};
             classLoader = new URLClassLoader(urls);
         }
