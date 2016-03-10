@@ -2,6 +2,7 @@ import java.io.*;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -116,11 +117,11 @@ public class Platform {
                 } else if (key.equals("proxy")) {
                     descList.setProxy(Boolean.parseBoolean(value));
                 } else if(key.equals("contributors")){
-                	Collection<String> col;
+                	Collection<String> col = new ArrayList<String>();
                 	String[] arrayS=value.split(", ", 0);
                 	for(int i=0;i<=arrayS.length ;i++){
                 		col.add(arrayS[i]);
-                		descList.setCollection(col);	
+                		descList.setContributeTo(col);	
                 	}
                 	
                 }
