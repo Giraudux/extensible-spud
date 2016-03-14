@@ -40,7 +40,7 @@ public class Platform {
         }
 
         if (classLoader__ == null) {
-            URL url = new URL("file://extensions"/*configuration.getDescPath()*/);
+            URL url = new URL(getConfiguration().getClassPath());
             URL urls[] = {url};
             classLoader__ = new URLClassLoader(urls);
         }
@@ -71,7 +71,7 @@ public class Platform {
         if (descriptions__ == null) {
             descriptions__ = new HashMap<String, Description>();
 
-            File extensionsDirectory = new File("descriptions");
+            File extensionsDirectory = new File(getConfiguration().getDescPath());
             if (extensionsDirectory.isDirectory()) {
                 File files[] = extensionsDirectory.listFiles();
                 if (files != null) {
@@ -103,10 +103,14 @@ public class Platform {
             configuration = new Configuration();
         }
 
-        return configuration;
+        return Platform.configuration;
     }
 
     public static void setConfiguration(Configuration configuration) {
+        if (configuration == null) {
+            configuration = new Configuration();
+        }
+
         Platform.configuration = configuration;
     }
 

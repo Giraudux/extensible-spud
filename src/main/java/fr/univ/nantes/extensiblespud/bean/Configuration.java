@@ -19,6 +19,33 @@ public class Configuration {
     private boolean proxyDefault;
     private boolean contributeRequired;
 
+    public Configuration() {
+        classPath = "file://extensions";
+        descPath = "descriptions";
+        nameRequired = true;
+        descRequired = true;
+        singleRequired = true;
+        autorunRequired = true;
+        proxyRequired = true;
+        contributeRequired = true;
+    }
+
+    public Configuration(Configuration configuration) {
+        this.classPath = configuration.classPath;
+        this.descPath = configuration.descPath;
+        this.nameRequired = configuration.nameRequired;
+        this.descRequired = configuration.descRequired;
+        this.singleRequired = configuration.singleRequired;
+        this.autorunRequired = configuration.autorunRequired;
+        this.proxyRequired = configuration.proxyRequired;
+        this.nameDefault = configuration.nameDefault;
+        this.descDefault = configuration.descDefault;
+        this.singleDefault = configuration.singleDefault;
+        this.autorunDefault = configuration.autorunDefault;
+        this.proxyDefault = configuration.proxyDefault;
+        this.contributeRequired = configuration.contributeRequired;
+    }
+
     public String getClassPath() {
         return classPath;
     }

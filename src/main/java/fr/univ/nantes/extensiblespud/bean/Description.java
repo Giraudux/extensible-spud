@@ -1,5 +1,8 @@
 package fr.univ.nantes.extensiblespud.bean;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  *
  */
@@ -9,7 +12,25 @@ public class Description {
     private boolean singleton;
     private boolean autorun;
     private boolean proxy;
-    private Iterable<String> contributeTo;
+    private Collection<String> contributeTo;
+
+    public Description() {
+        name = "";
+        description = "";
+        singleton = false;
+        autorun = false;
+        proxy = false;
+        contributeTo = new ArrayList<String>();
+    }
+
+    public Description(Description description) {
+        this.name = description.name;
+        this.description = description.description;
+        this.singleton = description.singleton;
+        this.autorun = description.autorun;
+        this.proxy = description.proxy;
+        this.contributeTo = new ArrayList<String>(description.contributeTo);
+    }
 
     public String getName() {
         return name;
@@ -51,11 +72,11 @@ public class Description {
         this.proxy = proxy;
     }
 
-    public Iterable<String> getContributeTo() {
+    public Collection<String> getContributeTo() {
         return contributeTo;
     }
 
-    public void setContributeTo(Iterable<String> contributeTo) {
+    public void setContributeTo(Collection<String> contributeTo) {
         this.contributeTo = contributeTo;
     }
 }
