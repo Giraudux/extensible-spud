@@ -1,12 +1,13 @@
 package fr.univ.nantes.extensiblespud.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  *
  */
-public class Description {
+public class Description implements Serializable {
     private String name;
     private String description;
     private boolean singleton;
@@ -23,14 +24,14 @@ public class Description {
         contributeTo = new ArrayList<String>();
     }
 
-    public Description(Description description) {
+    /*public Description(Description description) {
         this.name = description.name;
         this.description = description.description;
         this.singleton = description.singleton;
         this.autorun = description.autorun;
         this.proxy = description.proxy;
         this.contributeTo = new ArrayList<String>(description.contributeTo);
-    }
+    }*/
 
     public String getName() {
         return name;

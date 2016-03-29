@@ -4,16 +4,13 @@ sources = fr/univ/nantes/extensiblespud/bean/Configuration.java \
           fr/univ/nantes/extensiblespud/proxy/LazyLoaderHandler.java \
           fr/univ/nantes/extensiblespud/Platform.java
 classes = $(sources:.java=.class)
+project = ExtensibleSpud
 
-all: ExtensibleSpud
-
-ExtensibleSpud: $(classes)
+all: $(classes)
+	jar cvf $(project).jar $(classes)
 
 clean :
-	rm -f *.class
+	-rm $(classes) $(project).jar
 
 %.class : %.java
 	$(JAVAC) $<
-
-jar: $(classes)
-	jar cvf ExtensibleSpud.jar $(classes)

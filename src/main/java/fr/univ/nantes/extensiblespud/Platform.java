@@ -18,7 +18,6 @@ import java.util.*;
 public class Platform {
     private static Platform instance;
     private static Configuration configuration;
-
     private Map<String, Object> singletons__;
     private Map<String, Description> descriptions__;
     private ClassLoader classLoader__;
@@ -27,44 +26,41 @@ public class Platform {
     }
 
     public void autorun() throws Exception {
-        for (Description description : getDescriptions().values()) {
+        for (Description description : descriptions__.values()) {
             if (description.isAutorun()) {
-                loadExtension(description.getName());
+                loadExtension(description);
             }
         }
     }
 
     public Object loadExtension(String extension) throws Exception {
-        if (singletons__ == null) {
-            singletons__ = new HashMap<String, Object>();
-        }
+        return loadExtension(descriptions__.get(extension));
+    }
 
-        if (classLoader__ == null) {
-            URL url = new URL(getConfiguration().getClassPath());
-            URL urls[] = {url};
-            classLoader__ = new URLClassLoader(urls);
-        }
-
-        Description description = getDescriptions().get(extension);
-
+    public Object loadExtension(Description description) throws Exception {
         Class<?> extensionClass = Class.forName(description.getName(), true, classLoader__);
+        Object o = null;
+        Object extension = null;
+        Object proxy = null;
 
-        Object extensionInstance = null;
-        if (description.isProxy()) {
-            Class<?>[] interfaces = {extensionClass};
-            extensionInstance = Proxy.newProxyInstance(classLoader__, interfaces, new LazyLoaderHandler(extensionClass, null));
-        } else {
-            if (description.isSingleton()) {
-                if (singletons__.containsKey(extension)) {
-                    extensionInstance = singletons__.get(extension);
-                }
-            } else {
-                extensionInstance = extensionClass.newInstance();
-                singletons__.put(extension, extensionInstance);
+        if(!description.isSingleton() || (o = singletons__.get(description.getName())) == null) {
+            if (description.isAutorun() || !description.isProxy()) {
+                extension = extensionClass.newInstance();
+                o = extension;
+            }
+
+            if (description.isProxy()) {
+                Class<?>[] interfaces = {extensionClass};
+                proxy = Proxy.newProxyInstance(classLoader__, interfaces, new LazyLoaderHandler(extensionClass, extension));
+                o = proxy;
+            }
+
+            if(description.isSingleton()) {
+                singletons__.put(description.getName(), o);
             }
         }
 
-        return extensionInstance;
+        return o;
     }
 
     public Map<String, Description> getDescriptions() throws Exception {
@@ -90,9 +86,18 @@ public class Platform {
         return descriptions__;
     }
 
-    public static Platform getInstance() {
+    public static Platform getInstance() throws Exception {
         if (instance == null) {
+            if(configuration == null) {
+                configuration = new Configuration();
+            }
+
             instance = new Platform();
+            instance.singletons__ = new HashMap<String, Object>();
+            instance.descriptions__ = new HashMap<String, Description>();
+            URL url = new URL(configuration.getClassPath());
+            URL urls[] = {url};
+            instance.classLoader__ = new URLClassLoader(urls);
         }
 
         return instance;

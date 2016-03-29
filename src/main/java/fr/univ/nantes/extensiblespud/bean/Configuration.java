@@ -1,10 +1,12 @@
 package fr.univ.nantes.extensiblespud.bean;
 
+import java.io.Serializable;
+
 /**
  *
  */
 
-public class Configuration {
+public class Configuration implements Serializable {
     private String classPath;
     private String descPath;
     private boolean nameRequired;
@@ -30,7 +32,7 @@ public class Configuration {
         contributeRequired = true;
     }
 
-    public Configuration(Configuration configuration) {
+    /*public Configuration(Configuration configuration) {
         this.classPath = configuration.classPath;
         this.descPath = configuration.descPath;
         this.nameRequired = configuration.nameRequired;
@@ -44,7 +46,7 @@ public class Configuration {
         this.autorunDefault = configuration.autorunDefault;
         this.proxyDefault = configuration.proxyDefault;
         this.contributeRequired = configuration.contributeRequired;
-    }
+    }*/
 
     public String getClassPath() {
         return classPath;
