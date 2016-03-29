@@ -1,8 +1,10 @@
 package fr.univ.nantes.extensiblespud.loader;
 
+import java.io.InputStream;
+
 /**
  *
  */
 public interface Loader<T> {
-    public T load(String path);
+    T load(InputStream inputStream, Class<T> tClass) throws Exception;
 }

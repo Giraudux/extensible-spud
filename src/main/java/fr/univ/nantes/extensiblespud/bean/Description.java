@@ -10,9 +10,9 @@ import java.util.Collection;
 public class Description implements Serializable {
     private String name;
     private String description;
-    private boolean singleton;
-    private boolean autorun;
-    private boolean proxy;
+    private Boolean singleton;
+    private Boolean autorun;
+    private Boolean proxy;
     private Collection<String> contributeTo;
 
     public Description() {
@@ -23,15 +23,6 @@ public class Description implements Serializable {
         proxy = false;
         contributeTo = new ArrayList<String>();
     }
-
-    /*public Description(Description description) {
-        this.name = description.name;
-        this.description = description.description;
-        this.singleton = description.singleton;
-        this.autorun = description.autorun;
-        this.proxy = description.proxy;
-        this.contributeTo = new ArrayList<String>(description.contributeTo);
-    }*/
 
     public String getName() {
         return name;
@@ -49,27 +40,27 @@ public class Description implements Serializable {
         this.description = description;
     }
 
-    public boolean isSingleton() {
+    public Boolean getSingleton() {
         return singleton;
     }
 
-    public void setSingleton(boolean singleton) {
+    public void setSingleton(Boolean singleton) {
         this.singleton = singleton;
     }
 
-    public boolean isAutorun() {
+    public Boolean getAutorun() {
         return autorun;
     }
 
-    public void setAutorun(boolean autorun) {
+    public void setAutorun(Boolean autorun) {
         this.autorun = autorun;
     }
 
-    public boolean isProxy() {
+    public Boolean getProxy() {
         return proxy;
     }
 
-    public void setProxy(boolean proxy) {
+    public void setProxy(Boolean proxy) {
         this.proxy = proxy;
     }
 
