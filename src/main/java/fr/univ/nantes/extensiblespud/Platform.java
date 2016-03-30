@@ -1,7 +1,7 @@
 package fr.univ.nantes.extensiblespud;
 
-import fr.univ.nantes.extensiblespud.bean.Configuration;
-import fr.univ.nantes.extensiblespud.bean.Description;
+import fr.univ.nantes.extensiblespud.bean.ConfigurationBean;
+import fr.univ.nantes.extensiblespud.bean.DescriptionBean;
 import fr.univ.nantes.extensiblespud.parser.Parser;
 import fr.univ.nantes.extensiblespud.parser.PropertiesParser;
 import fr.univ.nantes.extensiblespud.proxy.LazyLoaderHandler;
@@ -21,27 +21,49 @@ import java.util.Map;
  */
 public class Platform {
     private static Platform instance;
-    private static Configuration configuration;
+    private static ConfigurationBean configuration;
     private Map<String, Object> singletons__;
-    private Map<String, Description> descriptions__;
+    private Map<String, DescriptionBean> descriptions__;
     private ClassLoader classLoader__;
 
+    /**
+     *
+     */
     private Platform() {
     }
 
+    /**
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws ClassNotFoundException
+     */
     public void autorun() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        for (Description description : descriptions__.values()) {
+        for (DescriptionBean description : descriptions__.values()) {
             if (description.getAutorun()) {
                 loadExtension(description);
             }
         }
     }
 
+    /**
+     * @param name
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws ClassNotFoundException
+     */
     public Object loadExtension(String name) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         return loadExtension(descriptions__.get(name));
     }
 
-    public Object loadExtension(Description description) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    /**
+     * @param description
+     * @return
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public Object loadExtension(DescriptionBean description) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Class<?> extensionClass = Class.forName(description.getName(), true, classLoader__);
         Object o = null;
         Object extension = null;
@@ -67,18 +89,26 @@ public class Platform {
         return o;
     }
 
-    public Map<String, Description> getDescriptions() throws IOException, ClassNotFoundException {
-        return (Map<String, Description>) copy(descriptions__);
+    /**
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public Map<String, DescriptionBean> getDescriptions() throws IOException, ClassNotFoundException {
+        return (Map<String, DescriptionBean>) copy(descriptions__);
     }
 
+    /**
+     *
+     */
     public void updateDescriptions() {
-        descriptions__ = new HashMap<String, Description>();
-        Parser<Description> parser = new PropertiesParser<Description>();
-        Description description;
+        descriptions__ = new HashMap<String, DescriptionBean>();
+        Parser<DescriptionBean> parser = new PropertiesParser<DescriptionBean>();
+        DescriptionBean description;
 
         for (File file : listFiles(configuration.getDescPath(), configuration.getRecursive())) {
             try {
-                description = parser.parse(new FileInputStream(file), Description.class);
+                description = parser.parse(new FileInputStream(file), DescriptionBean.class);
                 descriptions__.put(description.getName(), description);
             } catch (Exception ignored) {
                 ;
@@ -86,12 +116,22 @@ public class Platform {
         }
     }
 
+    /**
+     * @param path
+     * @param recursive
+     * @return
+     */
     private static Collection<File> listFiles(String path, boolean recursive) {
         Collection<File> files = new ArrayList<File>();
         listFiles(path, files, recursive);
         return files;
     }
 
+    /**
+     * @param path
+     * @param files
+     * @param recursive
+     */
     private static void listFiles(String path, Collection<File> files, boolean recursive) {
         File base = new File(path);
         if (base.isDirectory()) {
@@ -108,10 +148,14 @@ public class Platform {
         }
     }
 
+    /**
+     * @return
+     * @throws MalformedURLException
+     */
     public static Platform getInstance() throws MalformedURLException {
         if (instance == null) {
             if (configuration == null) {
-                configuration = new Configuration();
+                configuration = new ConfigurationBean();
             }
 
             instance = new Platform();
@@ -125,22 +169,38 @@ public class Platform {
         return instance;
     }
 
-    public static Configuration getConfiguration() throws IOException, ClassNotFoundException {
+    /**
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public static ConfigurationBean getConfiguration() throws IOException, ClassNotFoundException {
         if (configuration == null) {
-            configuration = new Configuration();
+            configuration = new ConfigurationBean();
         }
 
-        return (Configuration) copy(Platform.configuration);
+        return (ConfigurationBean) copy(Platform.configuration);
     }
 
-    public static void setConfiguration(Configuration configuration) throws IOException, ClassNotFoundException {
+    /**
+     * @param configuration
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public static void setConfiguration(ConfigurationBean configuration) throws IOException, ClassNotFoundException {
         if (configuration == null) {
-            configuration = new Configuration();
+            configuration = new ConfigurationBean();
         }
 
-        Platform.configuration = (Configuration) copy(configuration);
+        Platform.configuration = (ConfigurationBean) copy(configuration);
     }
 
+    /**
+     * @param object
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private static Object copy(Object object) throws IOException, ClassNotFoundException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);

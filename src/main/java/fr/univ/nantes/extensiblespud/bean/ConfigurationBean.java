@@ -4,7 +4,7 @@ package fr.univ.nantes.extensiblespud.bean;
  *
  */
 
-public class Configuration implements Bean {
+public class ConfigurationBean implements Bean {
     private String classPath;
     private String descPath;
     private Boolean recursive;
@@ -20,7 +20,7 @@ public class Configuration implements Bean {
     private Boolean proxyDefault;
     private Boolean contributeRequired;
 
-    public Configuration() {
+    public ConfigurationBean() {
         classPath = "file://extensions";
         descPath = "descriptions";
         recursive = true;

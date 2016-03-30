@@ -6,7 +6,7 @@ import java.util.Collection;
 /**
  *
  */
-public class Description implements Bean {
+public class DescriptionBean implements Bean {
     private String name;
     private String description;
     private Boolean singleton;
@@ -14,7 +14,7 @@ public class Description implements Bean {
     private Boolean proxy;
     private Collection<String> contributeTo;
 
-    public Description() {
+    public DescriptionBean() {
         name = "";
         description = "";
         singleton = false;
