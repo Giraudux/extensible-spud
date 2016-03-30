@@ -38,6 +38,10 @@ public class Platform {
      * @throws ClassNotFoundException
      */
     public void autorun() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        if(singletons__.isEmpty()) {
+            updateDescriptions();
+        }
+
         for (DescriptionBean description : descriptions__.values()) {
             if (description.getAutorun()) {
                 loadExtension(description);
@@ -63,7 +67,7 @@ public class Platform {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    public Object loadExtension(DescriptionBean description) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    private Object loadExtension(DescriptionBean description) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Class<?> extensionClass = Class.forName(description.getName(), true, classLoader__);
         Object o = null;
         Object extension = null;
@@ -76,7 +80,7 @@ public class Platform {
             }
 
             if (description.getProxy()) {
-                Class<?>[] interfaces = {extensionClass};
+                Class<?>[] interfaces = extensionClass.getInterfaces();
                 proxy = Proxy.newProxyInstance(classLoader__, interfaces, new LazyLoaderHandler(extensionClass, extension));
                 o = proxy;
             }
@@ -95,6 +99,10 @@ public class Platform {
      * @throws ClassNotFoundException
      */
     public Map<String, DescriptionBean> getDescriptions() throws IOException, ClassNotFoundException {
+        if(descriptions__.isEmpty()) {
+            updateDescriptions();
+        }
+
         return (Map<String, DescriptionBean>) copy(descriptions__);
     }
 
@@ -159,11 +167,11 @@ public class Platform {
             }
 
             instance = new Platform();
+            instance.descriptions__ = new HashMap<String, DescriptionBean>();
             instance.singletons__ = new HashMap<String, Object>();
             URL url = new URL(configuration.getClassPath());
             URL urls[] = {url};
             instance.classLoader__ = new URLClassLoader(urls);
-            instance.updateDescriptions();
         }
 
         return instance;
