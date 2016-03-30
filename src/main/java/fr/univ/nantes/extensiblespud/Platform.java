@@ -108,6 +108,25 @@ public class Platform {
 
     /**
      *
+     * @param contributeTo
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public Map<String, DescriptionBean> getContributors(String contributeTo) throws IOException, ClassNotFoundException {
+        Map<String,DescriptionBean> contributors = getDescriptions();
+
+        for(Map.Entry<String,DescriptionBean> entry : descriptions__.entrySet()) {
+            if(!entry.getValue().getContributeTo().contains(contributeTo)) {
+                contributors.remove(entry.getKey());
+            }
+        }
+
+        return contributors;
+    }
+
+    /**
+     *
      */
     public void updateDescriptions() {
         descriptions__ = new HashMap<String, DescriptionBean>();
