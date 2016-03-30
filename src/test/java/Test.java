@@ -1,3 +1,4 @@
+import fr.univ.nantes.extensiblespud.Platform;
 
 public class Test {
     public Test() {

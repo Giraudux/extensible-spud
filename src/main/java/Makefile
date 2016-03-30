@@ -1,6 +1,8 @@
 JAVAC = javac
 sources = fr/univ/nantes/extensiblespud/bean/Configuration.java \
           fr/univ/nantes/extensiblespud/bean/Description.java \
+          fr/univ/nantes/extensiblespud/parser/Parser.java \
+          fr/univ/nantes/extensiblespud/parser/PropertiesParser.java \
           fr/univ/nantes/extensiblespud/proxy/LazyLoaderHandler.java \
           fr/univ/nantes/extensiblespud/Platform.java
 classes = $(sources:.java=.class)

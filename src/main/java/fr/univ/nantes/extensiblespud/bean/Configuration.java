@@ -9,21 +9,23 @@ import java.io.Serializable;
 public class Configuration implements Serializable {
     private String classPath;
     private String descPath;
-    private boolean nameRequired;
-    private boolean descRequired;
-    private boolean singleRequired;
-    private boolean autorunRequired;
-    private boolean proxyRequired;
+    private Boolean recursive;
+    private Boolean nameRequired;
+    private Boolean descRequired;
+    private Boolean singleRequired;
+    private Boolean autorunRequired;
+    private Boolean proxyRequired;
     private String nameDefault;
     private String descDefault;
-    private boolean singleDefault;
-    private boolean autorunDefault;
-    private boolean proxyDefault;
-    private boolean contributeRequired;
+    private Boolean singleDefault;
+    private Boolean autorunDefault;
+    private Boolean proxyDefault;
+    private Boolean contributeRequired;
 
     public Configuration() {
         classPath = "file://extensions";
         descPath = "descriptions";
+        recursive = true;
         nameRequired = true;
         descRequired = true;
         singleRequired = true;
@@ -31,22 +33,6 @@ public class Configuration implements Serializable {
         proxyRequired = true;
         contributeRequired = true;
     }
-
-    /*public Configuration(Configuration configuration) {
-        this.classPath = configuration.classPath;
-        this.descPath = configuration.descPath;
-        this.nameRequired = configuration.nameRequired;
-        this.descRequired = configuration.descRequired;
-        this.singleRequired = configuration.singleRequired;
-        this.autorunRequired = configuration.autorunRequired;
-        this.proxyRequired = configuration.proxyRequired;
-        this.nameDefault = configuration.nameDefault;
-        this.descDefault = configuration.descDefault;
-        this.singleDefault = configuration.singleDefault;
-        this.autorunDefault = configuration.autorunDefault;
-        this.proxyDefault = configuration.proxyDefault;
-        this.contributeRequired = configuration.contributeRequired;
-    }*/
 
     public String getClassPath() {
         return classPath;
@@ -64,43 +50,51 @@ public class Configuration implements Serializable {
         this.descPath = descPath;
     }
 
-    public boolean isNameRequired() {
+    public Boolean getRecursive() {
+        return recursive;
+    }
+
+    public void setRecursive(Boolean recursive) {
+        this.recursive = recursive;
+    }
+
+    public Boolean getNameRequired() {
         return nameRequired;
     }
 
-    public void setNameRequired(boolean nameRequired) {
+    public void setNameRequired(Boolean nameRequired) {
         this.nameRequired = nameRequired;
     }
 
-    public boolean isDescRequired() {
+    public Boolean getDescRequired() {
         return descRequired;
     }
 
-    public void setDescRequired(boolean descRequired) {
+    public void setDescRequired(Boolean descRequired) {
         this.descRequired = descRequired;
     }
 
-    public boolean isSingleRequired() {
+    public Boolean getSingleRequired() {
         return singleRequired;
     }
 
-    public void setSingleRequired(boolean singleRequired) {
+    public void setSingleRequired(Boolean singleRequired) {
         this.singleRequired = singleRequired;
     }
 
-    public boolean isAutorunRequired() {
+    public Boolean getAutorunRequired() {
         return autorunRequired;
     }
 
-    public void setAutorunRequired(boolean autorunRequired) {
+    public void setAutorunRequired(Boolean autorunRequired) {
         this.autorunRequired = autorunRequired;
     }
 
-    public boolean isProxyRequired() {
+    public Boolean getProxyRequired() {
         return proxyRequired;
     }
 
-    public void setProxyRequired(boolean proxyRequired) {
+    public void setProxyRequired(Boolean proxyRequired) {
         this.proxyRequired = proxyRequired;
     }
 
@@ -120,35 +114,35 @@ public class Configuration implements Serializable {
         this.descDefault = descDefault;
     }
 
-    public boolean isSingleDefault() {
+    public Boolean getSingleDefault() {
         return singleDefault;
     }
 
-    public void setSingleDefault(boolean singleDefault) {
+    public void setSingleDefault(Boolean singleDefault) {
         this.singleDefault = singleDefault;
     }
 
-    public boolean isAutorunDefault() {
+    public Boolean getAutorunDefault() {
         return autorunDefault;
     }
 
-    public void setAutorunDefault(boolean autorunDefault) {
+    public void setAutorunDefault(Boolean autorunDefault) {
         this.autorunDefault = autorunDefault;
     }
 
-    public boolean isProxyDefault() {
+    public Boolean getProxyDefault() {
         return proxyDefault;
     }
 
-    public void setProxyDefault(boolean proxyDefault) {
+    public void setProxyDefault(Boolean proxyDefault) {
         this.proxyDefault = proxyDefault;
     }
 
-    public boolean isContributeRequired() {
+    public Boolean getContributeRequired() {
         return contributeRequired;
     }
 
-    public void setContributeRequired(boolean contributeRequired) {
+    public void setContributeRequired(Boolean contributeRequired) {
         this.contributeRequired = contributeRequired;
     }
 }

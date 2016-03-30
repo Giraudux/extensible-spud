@@ -1,18 +1,16 @@
-package fr.univ.nantes.extensiblespud.loader;
+package fr.univ.nantes.extensiblespud.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 
-public class PropertiesLoader<T> implements Loader<T> {
+public class PropertiesParser<T> implements Parser<T> {
 
-    public T load(InputStream inputStream, Class<T> tClass) throws IllegalAccessException, InstantiationException, IOException, InvocationTargetException {
+    public T parse(InputStream inputStream, Class<T> tClass) throws IllegalAccessException, InstantiationException, IOException, InvocationTargetException {
         T t = tClass.newInstance();
         Properties properties = new Properties();
 
@@ -50,8 +48,9 @@ public class PropertiesLoader<T> implements Loader<T> {
                         } else if(parameterType.equals(String.class)) {
                             method.invoke(t, properties.getProperty(key));
                         } else if(parameterType.equals(Collection.class)) {
-                            Collection<String> c = Arrays.asList(properties.getProperty(key).split("\\s*,\\s*"));
-                            /*if (((ParameterizedType) parameterType.getGenericSuperclass()).getActualTypeArguments()[0].getClass().equals(String.class)) {
+                            Collection<String> c = Arrays.asList(properties.getProperty(key).replace("[","").replace("]","").split("\\s*,\\s*"));
+                            method.invoke(t, c);
+                            /*if (((ParameterizedType) parameterType.getGenericSuperclass()).getActualTypeArguments()[0].equals(String.class)) {
                                 ;
                             }*/
                         }
