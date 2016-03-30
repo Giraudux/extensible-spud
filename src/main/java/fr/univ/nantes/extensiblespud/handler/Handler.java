@@ -1,4 +1,4 @@
-package fr.univ.nantes.extensiblespud.proxy;
+package fr.univ.nantes.extensiblespud.handler;
 
 import java.lang.reflect.InvocationHandler;
 

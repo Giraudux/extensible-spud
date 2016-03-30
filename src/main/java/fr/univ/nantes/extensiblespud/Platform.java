@@ -4,7 +4,7 @@ import fr.univ.nantes.extensiblespud.bean.ConfigurationBean;
 import fr.univ.nantes.extensiblespud.bean.DescriptionBean;
 import fr.univ.nantes.extensiblespud.parser.Parser;
 import fr.univ.nantes.extensiblespud.parser.PropertiesParser;
-import fr.univ.nantes.extensiblespud.proxy.LazyLoaderHandler;
+import fr.univ.nantes.extensiblespud.handler.LazyLoaderHandler;
 
 import java.io.*;
 import java.lang.reflect.Proxy;
