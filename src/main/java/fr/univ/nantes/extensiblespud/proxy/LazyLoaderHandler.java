@@ -10,13 +10,13 @@ public class LazyLoaderHandler implements InvocationHandler {
     private Class<?> extensionClass;
     private Object extensionInstance;
 
-    public LazyLoaderHandler (Class<?> extensionClass, Object extensionInstance) {
+    public LazyLoaderHandler(Class<?> extensionClass, Object extensionInstance) {
         this.extensionClass = extensionClass;
         this.extensionInstance = extensionInstance;
     }
 
     public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
-        if(extensionInstance == null) {
+        if (extensionInstance == null) {
             extensionInstance = extensionClass.newInstance();
         }
 

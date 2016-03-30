@@ -11,7 +11,10 @@ import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -73,7 +76,7 @@ public class Platform {
         Parser<Description> parser = new PropertiesParser<Description>();
         Description description;
 
-        for(File file : listFiles(configuration.getDescPath(), configuration.getRecursive())) {
+        for (File file : listFiles(configuration.getDescPath(), configuration.getRecursive())) {
             try {
                 description = parser.parse(new FileInputStream(file), Description.class);
                 descriptions__.put(description.getName(), description);
@@ -91,13 +94,13 @@ public class Platform {
 
     private static void listFiles(String path, Collection<File> files, boolean recursive) {
         File base = new File(path);
-        if(base.isDirectory()) {
+        if (base.isDirectory()) {
             File listFiles[] = base.listFiles();
             if (listFiles != null) {
-                for(File file : listFiles) {
-                    if(file.isFile()) {
+                for (File file : listFiles) {
+                    if (file.isFile()) {
                         files.add(file);
-                    } else  if(file.isDirectory() && recursive) {
+                    } else if (file.isDirectory() && recursive) {
                         listFiles(file.getPath(), files, recursive);
                     }
                 }

@@ -1,13 +1,12 @@
 package fr.univ.nantes.extensiblespud.bean;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  *
  */
-public class Description implements Serializable {
+public class Description implements Bean {
     private String name;
     private String description;
     private Boolean singleton;

@@ -1,12 +1,10 @@
 package fr.univ.nantes.extensiblespud.bean;
 
-import java.io.Serializable;
-
 /**
  *
  */
 
-public class Configuration implements Serializable {
+public class Configuration implements Bean {
     private String classPath;
     private String descPath;
     private Boolean recursive;
