@@ -1,3 +1,5 @@
+#
+
 JAVAC = javac
 sources = fr/univ/nantes/extensiblespud/bean/Bean.java \
           fr/univ/nantes/extensiblespud/bean/ConfigurationBean.java \
@@ -13,8 +15,8 @@ project = ExtensibleSpud
 all: $(classes)
 	jar cvf $(project).jar $(classes)
 
-clean :
+clean:
 	-rm $(classes) $(project).jar
 
-%.class : %.java
+%.class: %.java
 	$(JAVAC) $<
