@@ -2,6 +2,7 @@ package fr.univ.nantes.extensiblespud;
 
 import fr.univ.nantes.extensiblespud.bean.ConfigurationBean;
 import fr.univ.nantes.extensiblespud.bean.DescriptionBean;
+import fr.univ.nantes.extensiblespud.bean.StatusBean;
 import fr.univ.nantes.extensiblespud.parser.Parser;
 import fr.univ.nantes.extensiblespud.parser.PropertiesParser;
 import fr.univ.nantes.extensiblespud.handler.LazyLoaderHandler;
@@ -15,21 +16,33 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  *
  */
 public class Platform {
+    private static Logger logger = Logger.getLogger(Platform.class.getName());
     private static Platform instance;
     private static ConfigurationBean configuration;
     private Map<String, Object> singletons__;
     private Map<String, DescriptionBean> descriptions__;
+    private Map<String, Parser<DescriptionBean>> parsers__;
+    private Map<String, StatusBean> status__;
     private ClassLoader classLoader__;
 
     /**
      *
      */
-    private Platform() {
+    private Platform() throws MalformedURLException {
+        URL url = new URL(configuration.getClassPath());
+        URL urls[] = {url};
+        classLoader__ = new URLClassLoader(urls);
+        descriptions__ = new HashMap<String, DescriptionBean>();
+        parsers__ = new HashMap<String, Parser<DescriptionBean>>();
+        singletons__ = new HashMap<String, Object>();
+        status__ = new HashMap<String, StatusBean>();
+        parsers__.put("properties", new PropertiesParser<DescriptionBean>());
     }
 
     /**
@@ -38,7 +51,7 @@ public class Platform {
      * @throws ClassNotFoundException
      */
     public void autorun() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        if(singletons__.isEmpty()) {
+        if(descriptions__.isEmpty()) {
             updateDescriptions();
         }
 
@@ -72,22 +85,31 @@ public class Platform {
         Object o = null;
         Object extension = null;
         Object proxy = null;
+        StatusBean status = status__.get(description.getName());
 
-        if (!description.getSingleton() || (o = singletons__.get(description.getName())) == null) {
-            if (description.getAutorun() || !description.getProxy()) {
-                extension = extensionClass.newInstance();
-                o = extension;
-            }
+        try {
+            if (!description.getSingleton() || (o = singletons__.get(description.getName())) == null) {
+                if (description.getAutorun() || !description.getProxy()) {
+                    extension = extensionClass.newInstance();
+                    o = extension;
+                }
 
-            if (description.getProxy()) {
-                Class<?>[] interfaces = extensionClass.getInterfaces();
-                proxy = Proxy.newProxyInstance(classLoader__, interfaces, new LazyLoaderHandler(extensionClass, extension));
-                o = proxy;
-            }
+                if (description.getProxy()) {
+                    Class<?>[] interfaces = extensionClass.getInterfaces();
+                    proxy = Proxy.newProxyInstance(classLoader__, interfaces, new LazyLoaderHandler(extensionClass, extension));
+                    o = proxy;
+                }
 
-            if (description.getSingleton()) {
-                singletons__.put(description.getName(), o);
+                if (description.getSingleton()) {
+                    singletons__.put(description.getName(), o);
+                }
+
+                status.setSuccessfullyLoaded(true);
             }
+        } catch (Exception e) {
+            status.setLoadingFailed(true);
+            status.setLastException(e);
+            //throw e;
         }
 
         return o;
@@ -127,9 +149,20 @@ public class Platform {
 
     /**
      *
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public Map<String, StatusBean> getStatus() throws IOException, ClassNotFoundException {
+        return (Map<String, StatusBean>) copy(status__);
+    }
+
+    /**
+     *
      */
     public void updateDescriptions() {
-        descriptions__ = new HashMap<String, DescriptionBean>();
+        //descriptions__ = new HashMap<String, DescriptionBean>();
+        //status__ = new HashMap<String, StatusBean>();
         Parser<DescriptionBean> parser = new PropertiesParser<DescriptionBean>();
         DescriptionBean description;
 
@@ -137,6 +170,9 @@ public class Platform {
             try {
                 description = parser.parse(new FileInputStream(file), DescriptionBean.class);
                 descriptions__.put(description.getName(), description);
+                if(!status__.containsKey(description.getName())) {
+                    status__.put(description.getName(), new StatusBean());
+                }
             } catch (Exception ignored) {
                 ;
             }
@@ -186,11 +222,6 @@ public class Platform {
             }
 
             instance = new Platform();
-            instance.descriptions__ = new HashMap<String, DescriptionBean>();
-            instance.singletons__ = new HashMap<String, Object>();
-            URL url = new URL(configuration.getClassPath());
-            URL urls[] = {url};
-            instance.classLoader__ = new URLClassLoader(urls);
         }
 
         return instance;

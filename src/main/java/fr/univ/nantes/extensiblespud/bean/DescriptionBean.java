@@ -13,6 +13,7 @@ public class DescriptionBean implements Bean {
     private Boolean autorun;
     private Boolean proxy;
     private Collection<String> contributeTo;
+    private Collection<String> dependencies;
 
     public DescriptionBean() {
         name = "";
@@ -69,5 +70,13 @@ public class DescriptionBean implements Bean {
 
     public void setContributeTo(Collection<String> contributeTo) {
         this.contributeTo = contributeTo;
+    }
+
+    public Collection<String> getDependencies() {
+        return dependencies;
+    }
+
+    public void setDependencies(Collection<String> dependencies) {
+        this.dependencies = dependencies;
     }
 }

@@ -6,4 +6,5 @@ all:
 	mv src/main/java/*.jar build
 
 clean:
+	-rm -r build ; \
 	$(MAKE) -C src/main/java clean
