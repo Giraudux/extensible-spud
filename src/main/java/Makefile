@@ -1,9 +1,5 @@
 #
 
-#SRCS = $(wildcard *.java)
-#OBJS = $(SRCS:.java=.class)
-#all: $(OBJS)
-
 JAVAC = javac
 sources = fr/univ/nantes/extensiblespud/bean/Bean.java \
           fr/univ/nantes/extensiblespud/bean/ConfigurationBean.java \
