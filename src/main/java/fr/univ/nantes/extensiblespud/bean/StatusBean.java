@@ -1,5 +1,7 @@
 package fr.univ.nantes.extensiblespud.bean;
 
+import java.util.Collection;
+
 /**
  *
  */
@@ -7,6 +9,7 @@ public class StatusBean implements Bean {
     private Boolean successfullyLoaded;
     private Boolean loadingFailed;
     private Exception lastException;
+    private Collection<String> unresolvedDependencies;
 
     public StatusBean() {
         successfullyLoaded = false;
@@ -36,5 +39,13 @@ public class StatusBean implements Bean {
 
     public void setLastException(Exception lastException) {
         this.lastException = lastException;
+    }
+
+    public Collection<String> getUnresolvedDependencies() {
+        return unresolvedDependencies;
+    }
+
+    public void setUnresolvedDependencies(Collection<String> unresolvedDependencies) {
+        this.unresolvedDependencies = unresolvedDependencies;
     }
 }

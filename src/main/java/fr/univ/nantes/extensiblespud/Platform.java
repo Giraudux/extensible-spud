@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -37,7 +38,7 @@ public class Platform {
     private Platform() throws MalformedURLException {
         URL url = new URL(configuration.getClassPath());
         URL urls[] = {url};
-        classLoader__ = new URLClassLoader(urls);
+        classLoader__ = new URLClassLoader(urls/*, this.getClass().getClassLoader()*/);
         descriptions__ = new HashMap<String, DescriptionBean>();
         parsers__ = new HashMap<String, Parser<DescriptionBean>>();
         singletons__ = new HashMap<String, Object>();
@@ -107,6 +108,7 @@ public class Platform {
                 status.setSuccessfullyLoaded(true);
             }
         } catch (Exception e) {
+            logger.log(Level.WARNING, "can't load \""+description.getName()+"\" extension: "+e.toString());
             status.setLoadingFailed(true);
             status.setLastException(e);
             //throw e;
@@ -163,18 +165,29 @@ public class Platform {
     public void updateDescriptions() {
         //descriptions__ = new HashMap<String, DescriptionBean>();
         //status__ = new HashMap<String, StatusBean>();
-        Parser<DescriptionBean> parser = new PropertiesParser<DescriptionBean>();
+        String fileExtension;
+        Parser<DescriptionBean> parser;
         DescriptionBean description;
+        StatusBean status;
 
-        for (File file : listFiles(configuration.getDescPath(), configuration.getRecursive())) {
-            try {
-                description = parser.parse(new FileInputStream(file), DescriptionBean.class);
-                descriptions__.put(description.getName(), description);
-                if(!status__.containsKey(description.getName())) {
-                    status__.put(description.getName(), new StatusBean());
+        logger.log(Level.INFO, "update descriptions");
+
+        for (File file : listFiles(configuration.getDescriptionPath(), configuration.getRecursive())) {
+            fileExtension = getFileExtension(file);
+            if((parser = parsers__.get(fileExtension)) == null) {
+                logger.log(Level.WARNING, "no description parser mapped for the \""+fileExtension+"\" extension");
+            } else {
+                try {
+                    description = parser.parse(new FileInputStream(file), DescriptionBean.class);
+                    descriptions__.put(description.getName(), description);
+                    if(!status__.containsKey(description.getName())) {
+                        status = new StatusBean();
+                        status.setUnresolvedDependencies(new ArrayList<String>(description.getDependencies()));
+                        status__.put(description.getName(), status);
+                    }
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "can't parse \""+file.getPath()+"\" description file: "+e.toString());
                 }
-            } catch (Exception ignored) {
-                ;
             }
         }
     }
@@ -250,6 +263,8 @@ public class Platform {
             configuration = new ConfigurationBean();
         }
 
+        logger.log(Level.INFO, "update platform configuration");
+
         Platform.configuration = (ConfigurationBean) copy(configuration);
     }
 
@@ -267,5 +282,34 @@ public class Platform {
         oos.close();
         ObjectInputStream oin = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
         return oin.readObject();
+    }
+
+    private static String getFileExtension(File file) {
+        String fileExtension = "";
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf('.');
+        if(dotIndex >= 0) {
+            fileExtension = fileName.substring(dotIndex+1);
+        }
+        return fileExtension;
+    }
+
+    /**
+     *
+     * @param fileExtension
+     * @param descriptionParser
+     * @return
+     */
+    public Parser<DescriptionBean> putDescriptionParser(String fileExtension, Parser<DescriptionBean> descriptionParser) {
+        return parsers__.put(fileExtension, descriptionParser);
+    }
+
+    /**
+     *
+     * @param fileExtension
+     * @return
+     */
+    public Parser<DescriptionBean> removeDescriptionParser(String fileExtension) {
+        return parsers__.remove(fileExtension);
     }
 }

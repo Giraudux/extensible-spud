@@ -13,7 +13,7 @@ public class PlatformTest {
     public void test0() throws Exception {
         ConfigurationBean configuration = new ConfigurationBean();
         configuration.setClassPath("file://target/test-classes");
-        configuration.setDescPath("src/test/resources");
+        configuration.setDescriptionPath("src/test/resources");
         Platform.setConfiguration(configuration);
 
         for(Map.Entry<String,DescriptionBean> entry: Platform.getInstance().getDescriptions().entrySet()) {

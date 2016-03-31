@@ -22,6 +22,7 @@ public class DescriptionBean implements Bean {
         autorun = false;
         proxy = false;
         contributeTo = new ArrayList<String>();
+        dependencies = new ArrayList<String>();
     }
 
     public String getName() {
