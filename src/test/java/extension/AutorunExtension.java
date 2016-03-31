@@ -1,9 +1,12 @@
 package extension;
 
-public class AutorunExtension implements Extension {
+import fr.univ.nantes.extensiblespud.Platform;
 
-    public AutorunExtension() {
+public class AutorunExtension implements Extension<Object,Object> {
+
+    public AutorunExtension() throws Exception {
         System.out.println(System.identityHashCode(this)+": AutorunExtension: constructor");
+        ((ExtensionInteger) Platform.getInstance().loadExtension("extension.AccExtension")).run(null);
     }
 
     public Object run(Object o) {

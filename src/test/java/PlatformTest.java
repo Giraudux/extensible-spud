@@ -1,7 +1,9 @@
 import extension.Extension;
+import extension.ExtensionInteger;
 import fr.univ.nantes.extensiblespud.Platform;
 import fr.univ.nantes.extensiblespud.bean.ConfigurationBean;
 import fr.univ.nantes.extensiblespud.bean.DescriptionBean;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Map;
@@ -9,13 +11,24 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 public class PlatformTest {
-    @Test
-    public void test0() throws Exception {
+
+    @BeforeClass
+    public static void init() throws Exception {
         ConfigurationBean configuration = new ConfigurationBean();
         configuration.setClassPath("file://target/test-classes");
         configuration.setDescriptionPath("src/test/resources");
         Platform.setConfiguration(configuration);
+    }
 
+    @Test
+    public void testAutoRun() throws Exception {
+        Platform.getInstance().autorun();
+        ExtensionInteger extension = (ExtensionInteger) Platform.getInstance().loadExtension("extension.AccExtension");
+        assertEquals((int) extension.run(null), 2);
+    }
+
+    @Test
+    public void testSingleton() throws Exception {
         for(Map.Entry<String,DescriptionBean> entry: Platform.getInstance().getDescriptions().entrySet()) {
             if(entry.getValue().getSingleton()) {
                 Extension extension0 = (Extension) Platform.getInstance().loadExtension(entry.getKey());
@@ -25,10 +38,5 @@ public class PlatformTest {
                 extension1.run(null);
             }
         }
-    }
-
-    @Test
-    public void test1() throws Exception {
-        ;
     }
 }

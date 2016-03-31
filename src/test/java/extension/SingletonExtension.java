@@ -1,6 +1,6 @@
 package extension;
 
-public class SingletonExtension implements Extension {
+public class SingletonExtension implements Extension<Object,Object> {
     public SingletonExtension() {
         System.out.println(System.identityHashCode(this)+": SingletonExtension: constructor");
     }

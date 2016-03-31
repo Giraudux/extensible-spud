@@ -1,5 +1,5 @@
 package extension;
 
-public interface Extension {
-    Object run(Object o);
+public interface Extension<A,B> {
+    A run(B t);
 }

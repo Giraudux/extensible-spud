@@ -1,6 +1,6 @@
 package extension;
 
-public class DefaultExtension implements Extension {
+public class DefaultExtension implements Extension<Object,Object> {
 
     public DefaultExtension() {
         System.out.println(System.identityHashCode(this)+": DefaultExtension: run");
