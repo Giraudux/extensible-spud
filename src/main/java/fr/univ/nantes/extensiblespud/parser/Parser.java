@@ -6,7 +6,16 @@ import java.io.InputStream;
  *
  */
 public interface Parser<T> {
-    /*T parse(InputStream inputStream, Class<T> tClass) throws Exception;*/
+
+    /**
+     * @param inputStream
+     * @return
+     * @throws Exception
+     */
     T parse(InputStream inputStream) throws Exception;
+
+    /**
+     * @return
+     */
     String fileExtension();
 }

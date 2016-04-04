@@ -11,6 +11,9 @@ public class StatusBean implements Bean {
     private Exception lastException;
     private Collection<String> unresolvedDependencies;
 
+    /**
+     *
+     */
     public StatusBean() {
         successfullyLoaded = false;
         loadingFailed = false;

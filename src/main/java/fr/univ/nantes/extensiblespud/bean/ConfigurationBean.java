@@ -9,6 +9,9 @@ public class ConfigurationBean implements Bean {
     private String descriptionPath;
     private Boolean recursive;
 
+    /**
+     *
+     */
     public ConfigurationBean() {
         classPath = "file://extensions";
         descriptionPath = "descriptions";

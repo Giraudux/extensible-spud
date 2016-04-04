@@ -15,6 +15,9 @@ public class DescriptionBean implements Bean {
     private Collection<String> contributeTo;
     private Collection<String> dependencies;
 
+    /**
+     *
+     */
     public DescriptionBean() {
         name = "";
         description = "";
