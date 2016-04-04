@@ -5,6 +5,8 @@ sources = fr/univ/nantes/extensiblespud/bean/Bean.java \
           fr/univ/nantes/extensiblespud/bean/ConfigurationBean.java \
           fr/univ/nantes/extensiblespud/bean/DescriptionBean.java \
           fr/univ/nantes/extensiblespud/bean/StatusBean.java \
+          fr/univ/nantes/extensiblespud/parser/DescriptionParser.java \
+          fr/univ/nantes/extensiblespud/parser/DescriptionPropertiesParser.java \
           fr/univ/nantes/extensiblespud/parser/Parser.java \
           fr/univ/nantes/extensiblespud/parser/PropertiesParser.java \
           fr/univ/nantes/extensiblespud/handler/Handler.java \
