@@ -3,8 +3,9 @@ package fr.univ.nantes.extensiblespud;
 import fr.univ.nantes.extensiblespud.bean.ConfigurationBean;
 import fr.univ.nantes.extensiblespud.bean.DescriptionBean;
 import fr.univ.nantes.extensiblespud.bean.StatusBean;
+import fr.univ.nantes.extensiblespud.parser.DescriptionParser;
+import fr.univ.nantes.extensiblespud.parser.DescriptionPropertiesParser;
 import fr.univ.nantes.extensiblespud.parser.Parser;
-import fr.univ.nantes.extensiblespud.parser.PropertiesParser;
 import fr.univ.nantes.extensiblespud.handler.LazyLoaderHandler;
 
 import java.io.*;
@@ -28,7 +29,7 @@ public class Platform {
     private static ConfigurationBean configuration;
     private Map<String, Object> singletons__;
     private Map<String, DescriptionBean> descriptions__;
-    private Map<String, Parser<DescriptionBean>> parsers__;
+    private Map<String, DescriptionParser> parsers__;
     private Map<String, StatusBean> status__;
     private ClassLoader classLoader__;
 
@@ -40,10 +41,11 @@ public class Platform {
         URL urls[] = {url};
         classLoader__ = new URLClassLoader(urls/*, this.getClass().getClassLoader()*/);
         descriptions__ = new HashMap<String, DescriptionBean>();
-        parsers__ = new HashMap<String, Parser<DescriptionBean>>();
+        parsers__ = new HashMap<String, DescriptionParser>();
         singletons__ = new HashMap<String, Object>();
         status__ = new HashMap<String, StatusBean>();
-        parsers__.put("properties", new PropertiesParser<DescriptionBean>());
+        DescriptionParser parser = new DescriptionPropertiesParser();
+        parsers__.put(parser.fileExtension(), parser);
     }
 
     /**
@@ -169,26 +171,39 @@ public class Platform {
         Parser<DescriptionBean> parser;
         DescriptionBean description;
         StatusBean status;
+        boolean update;
 
         logger.log(Level.INFO, "update descriptions");
 
+        update = false;
         for (File file : listFiles(configuration.getDescriptionPath(), configuration.getRecursive())) {
             fileExtension = getFileExtension(file);
             if((parser = parsers__.get(fileExtension)) == null) {
                 logger.log(Level.WARNING, "no description parser mapped for the \""+fileExtension+"\" extension");
             } else {
                 try {
-                    description = parser.parse(new FileInputStream(file), DescriptionBean.class);
+                    description = parser.parse(new FileInputStream(file));
                     descriptions__.put(description.getName(), description);
                     if(!status__.containsKey(description.getName())) {
                         status = new StatusBean();
                         status.setUnresolvedDependencies(new ArrayList<String>(description.getDependencies()));
                         status__.put(description.getName(), status);
                     }
+                    if(description.getContributeTo().contains(DescriptionParser.class.getName())) {
+                        DescriptionParser newParser = (DescriptionParser) Platform.getInstance().loadExtension(description.getName());
+                        if(!parsers__.containsKey(newParser.fileExtension())) {
+                            parsers__.put(newParser.fileExtension(), newParser);
+                            update = true;
+                        }
+                    }
                 } catch (Exception e) {
                     logger.log(Level.WARNING, "can't parse \""+file.getPath()+"\" description file: "+e.toString());
                 }
             }
+        }
+
+        if(update) {
+            updateDescriptions();
         }
     }
 
@@ -300,7 +315,7 @@ public class Platform {
      * @param descriptionParser
      * @return
      */
-    public Parser<DescriptionBean> putDescriptionParser(String fileExtension, Parser<DescriptionBean> descriptionParser) {
+    public Parser<DescriptionBean> putDescriptionParser(String fileExtension, DescriptionParser descriptionParser) {
         return parsers__.put(fileExtension, descriptionParser);
     }
 
