@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
@@ -71,13 +72,14 @@ public abstract class PropertiesParser<T> implements Parser<T> {
                         } else if (parameterType.equals(String.class)) {
                             method.invoke(t, properties.getProperty(key));
                         } else if (parameterType.equals(Collection.class)) {
-                            Collection<String> c = Arrays.asList(properties.getProperty(key).replace("[", "").replace("]", "").replace(" ", "").split(","));
-                            for (String s : c) {
-                                if (s.isEmpty()) {
-                                    c.remove(s);
+                            Collection<String> c0 = Arrays.asList(properties.getProperty(key).replace("[", "").replace("]", "").replace(" ", "").split(","));
+                            Collection<String> c1 = new ArrayList<String>();
+                            for (String s : c0) {
+                                if (!s.isEmpty()) {
+                                    c1.add(s);
                                 }
                             }
-                            method.invoke(t, c);
+                            method.invoke(t, c1);
                         }
 
                         break;
