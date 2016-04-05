@@ -23,8 +23,6 @@ public class HandlerManager implements InvocationHandler, Handler {
     }
 
     /**
-     *
-     *
      * @param handlerManager
      */
     public HandlerManager(HandlerManager handlerManager) {
@@ -33,7 +31,6 @@ public class HandlerManager implements InvocationHandler, Handler {
     }
 
     /**
-     *
      * @param o
      * @param method
      * @param objects
@@ -41,10 +38,10 @@ public class HandlerManager implements InvocationHandler, Handler {
      * @throws Throwable
      */
     public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
-        for(Handler handler : handlers__) {
-            for(Class<?> aClass  : handler.getInterfaces()) {
-                for(Method aMethod : aClass.getMethods()) {
-                    if(method.equals(aMethod)) {
+        for (Handler handler : handlers__) {
+            for (Class<?> aClass : handler.getInterfaces()) {
+                for (Method aMethod : aClass.getMethods()) {
+                    if (method.equals(aMethod)) {
                         return handler.invoke(o, method, objects);
                     }
                 }
@@ -55,24 +52,22 @@ public class HandlerManager implements InvocationHandler, Handler {
     }
 
     /**
-     *
      * @param handlerBean
      */
     public void setHandlerBean(HandlerBean handlerBean) {
         handlerBean__ = handlerBean;
-        for(Handler handler : handlers__) {
+        for (Handler handler : handlers__) {
             handler.setHandlerBean(handlerBean);
         }
     }
 
     /**
-     *
      * @return
      */
     public Collection<Class<?>> getInterfaces() {
         Collection<Class<?>> interfaces = new ArrayList<Class<?>>();
 
-        for(Handler handler : handlers__) {
+        for (Handler handler : handlers__) {
             interfaces.addAll(handler.getInterfaces());
         }
 
@@ -80,7 +75,6 @@ public class HandlerManager implements InvocationHandler, Handler {
     }
 
     /**
-     *
      * @param handler
      * @return
      */
@@ -90,7 +84,6 @@ public class HandlerManager implements InvocationHandler, Handler {
     }
 
     /**
-     *
      * @param handler
      * @return
      */

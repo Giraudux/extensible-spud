@@ -9,8 +9,6 @@ import fr.univ.nantes.extensiblespud.handler.HandlerManager;
 import fr.univ.nantes.extensiblespud.handler.LazyLoaderHandler;
 import fr.univ.nantes.extensiblespud.parser.DescriptionParser;
 import fr.univ.nantes.extensiblespud.parser.DescriptionPropertiesParser;
-import fr.univ.nantes.extensiblespud.parser.Parser;
-import org.hamcrest.Description;
 
 import java.io.*;
 import java.lang.reflect.Proxy;
@@ -64,7 +62,6 @@ public class Platform {
     }
 
     /**
-     *
      * @param name
      * @return
      */
@@ -115,7 +112,7 @@ public class Platform {
             }
         } catch (Exception e) {
             logger.log(Level.WARNING, "can't load \"" + description.getName() + "\" extension: " + e.toString());
-            if(status != null) {
+            if (status != null) {
                 status.setLoadingFailed(true);
                 status.setLastException(e);
             }
@@ -181,31 +178,31 @@ public class Platform {
         update = false;
         for (File file : listFiles(configuration.getDescriptionPath(), configuration.getRecursive())) {
             fileExtension = getFileExtension(file);
-                try {
-                    parser = null;
-                    for(Map.Entry<String,DescriptionBean> entry : getContributors(DescriptionParser.class.getName()).entrySet()) {
-                        if((parser = (DescriptionParser) loadExtension(entry.getKey())) != null && parser.fileExtension().equals(fileExtension)) {
-                            break;
-                        }
+            try {
+                parser = null;
+                for (Map.Entry<String, DescriptionBean> entry : getContributors(DescriptionParser.class.getName()).entrySet()) {
+                    if ((parser = (DescriptionParser) loadExtension(entry.getKey())) != null && parser.fileExtension().equals(fileExtension)) {
+                        break;
                     }
-
-                    if(parser == null) {
-                        continue;
-                    }
-
-                    description = parser.parse(new FileInputStream(file));
-                    descriptions__.put(description.getName(), description);
-                    if (!status__.containsKey(description.getName())) {
-                        status = new StatusBean();
-                        status.setUnresolvedDependencies(new ArrayList<String>(description.getDependencies()));
-                        status__.put(description.getName(), status);
-                        if (description.getContributeTo().contains(DescriptionParser.class.getName())) {
-                            update = true;
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.log(Level.WARNING, "can't parse \"" + file.getPath() + "\" description file: " + e.toString());
                 }
+
+                if (parser == null) {
+                    continue;
+                }
+
+                description = parser.parse(new FileInputStream(file));
+                descriptions__.put(description.getName(), description);
+                if (!status__.containsKey(description.getName())) {
+                    status = new StatusBean();
+                    status.setUnresolvedDependencies(new ArrayList<String>(description.getDependencies()));
+                    status__.put(description.getName(), status);
+                    if (description.getContributeTo().contains(DescriptionParser.class.getName())) {
+                        update = true;
+                    }
+                }
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "can't parse \"" + file.getPath() + "\" description file: " + e.toString());
+            }
         }
 
         if (update) {
@@ -326,7 +323,6 @@ public class Platform {
     }
 
     /**
-     *
      * @param file
      * @return
      */

@@ -30,7 +30,6 @@ public class LazyLoaderHandler implements Handler {
     }
 
     /**
-     *
      * @param handlerBean
      */
     public void setHandlerBean(HandlerBean handlerBean) {
@@ -44,7 +43,6 @@ public class LazyLoaderHandler implements Handler {
     }
 
     /**
-     *
      * @return
      */
     public Collection<Class<?>> getInterfaces() {
