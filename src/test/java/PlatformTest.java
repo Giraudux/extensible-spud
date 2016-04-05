@@ -29,7 +29,7 @@ public class PlatformTest {
 
     @Test
     public void testSingleton() throws Exception {
-        for(Map.Entry<String,DescriptionBean> entry: Platform.getInstance().getDescriptions().entrySet()) {
+        for(Map.Entry<String,DescriptionBean> entry: Platform.getInstance().getContributors(Extension.class.getName()).entrySet()) {
             if(entry.getValue().getSingleton()) {
                 Extension extension0 = (Extension) Platform.getInstance().loadExtension(entry.getKey());
                 Extension extension1 = (Extension) Platform.getInstance().loadExtension(entry.getKey());

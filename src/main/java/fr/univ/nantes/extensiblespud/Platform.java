@@ -4,11 +4,13 @@ import fr.univ.nantes.extensiblespud.bean.ConfigurationBean;
 import fr.univ.nantes.extensiblespud.bean.DescriptionBean;
 import fr.univ.nantes.extensiblespud.bean.HandlerBean;
 import fr.univ.nantes.extensiblespud.bean.StatusBean;
+import fr.univ.nantes.extensiblespud.handler.Handler;
 import fr.univ.nantes.extensiblespud.handler.HandlerManager;
 import fr.univ.nantes.extensiblespud.handler.LazyLoaderHandler;
 import fr.univ.nantes.extensiblespud.parser.DescriptionParser;
 import fr.univ.nantes.extensiblespud.parser.DescriptionPropertiesParser;
 import fr.univ.nantes.extensiblespud.parser.Parser;
+import org.hamcrest.Description;
 
 import java.io.*;
 import java.lang.reflect.Proxy;
@@ -31,7 +33,6 @@ public class Platform {
     private static ConfigurationBean configuration;
     private Map<String, Object> singletons__;
     private Map<String, DescriptionBean> descriptions__;
-    private Map<String, DescriptionParser> parsers__;
     private Map<String, StatusBean> status__;
     private ClassLoader classLoader__;
 
@@ -43,20 +44,17 @@ public class Platform {
         URL urls[] = {url};
         classLoader__ = new URLClassLoader(urls);
         descriptions__ = new HashMap<String, DescriptionBean>();
-        parsers__ = new HashMap<String, DescriptionParser>();
         singletons__ = new HashMap<String, Object>();
         status__ = new HashMap<String, StatusBean>();
         DescriptionParser parser = new DescriptionPropertiesParser();
-        parsers__.put(parser.fileExtension(), parser);
+        addBaseDescriptions();
     }
 
     /**
      *
      */
     public void autorun() {
-        if (descriptions__.isEmpty()) {
-            updateDescriptions();
-        }
+        updateDescriptions();
 
         for (DescriptionBean description : descriptions__.values()) {
             if (description.getAutorun()) {
@@ -173,7 +171,7 @@ public class Platform {
         /*descriptions__ = new HashMap<String, DescriptionBean>();
         status__ = new HashMap<String, StatusBean>();*/
         String fileExtension;
-        Parser<DescriptionBean> parser;
+        DescriptionParser parser;
         DescriptionBean description;
         StatusBean status;
         boolean update;
@@ -183,28 +181,31 @@ public class Platform {
         update = false;
         for (File file : listFiles(configuration.getDescriptionPath(), configuration.getRecursive())) {
             fileExtension = getFileExtension(file);
-            if ((parser = parsers__.get(fileExtension)) == null) {
-                logger.log(Level.WARNING, "no description parser mapped for the \"" + fileExtension + "\" file extension");
-            } else {
                 try {
+                    parser = null;
+                    for(Map.Entry<String,DescriptionBean> entry : getContributors(DescriptionParser.class.getName()).entrySet()) {
+                        if((parser = (DescriptionParser) loadExtension(entry.getKey())) != null && parser.fileExtension().equals(fileExtension)) {
+                            break;
+                        }
+                    }
+
+                    if(parser == null) {
+                        continue;
+                    }
+
                     description = parser.parse(new FileInputStream(file));
                     descriptions__.put(description.getName(), description);
                     if (!status__.containsKey(description.getName())) {
                         status = new StatusBean();
                         status.setUnresolvedDependencies(new ArrayList<String>(description.getDependencies()));
                         status__.put(description.getName(), status);
-                    }
-                    if (description.getContributeTo().contains(DescriptionParser.class.getName())) {
-                        DescriptionParser newParser = (DescriptionParser) Platform.getInstance().loadExtension(description.getName());
-                        if (!parsers__.containsKey(newParser.fileExtension())) {
-                            parsers__.put(newParser.fileExtension(), newParser);
+                        if (description.getContributeTo().contains(DescriptionParser.class.getName())) {
                             update = true;
                         }
                     }
                 } catch (Exception e) {
                     logger.log(Level.WARNING, "can't parse \"" + file.getPath() + "\" description file: " + e.toString());
                 }
-            }
         }
 
         if (update) {
@@ -254,6 +255,26 @@ public class Platform {
         logger.log(Level.INFO, "update platform configuration");
 
         Platform.configuration = (ConfigurationBean) copy(configuration);
+    }
+
+    private void addBaseDescriptions() {
+        DescriptionBean description;
+        Collection<String> contributeTo;
+
+        contributeTo = new ArrayList<String>();
+        contributeTo.add(DescriptionParser.class.getName());
+        description = new DescriptionBean();
+        description.setName(DescriptionPropertiesParser.class.getName());
+        description.setContributeTo(contributeTo);
+        description.setSingleton(true);
+        descriptions__.put(description.getName(), description);
+
+        contributeTo = new ArrayList<String>();
+        contributeTo.add(Handler.class.getName());
+        description = new DescriptionBean();
+        description.setName(LazyLoaderHandler.class.getName());
+        description.setContributeTo(contributeTo);
+        descriptions__.put(description.getName(), description);
     }
 
     /**
