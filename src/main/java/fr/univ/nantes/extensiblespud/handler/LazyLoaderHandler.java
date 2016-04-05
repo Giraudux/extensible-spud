@@ -1,22 +1,18 @@
 package fr.univ.nantes.extensiblespud.handler;
 
+import fr.univ.nantes.extensiblespud.bean.HandlerBean;
+
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  *
  */
 public class LazyLoaderHandler implements Handler {
-    private Class<?> extensionClass;
-    private Object extensionInstance;
-
-    /**
-     * @param extensionClass
-     * @param extensionInstance
-     */
-    public LazyLoaderHandler(Class<?> extensionClass, Object extensionInstance) {
-        this.extensionClass = extensionClass;
-        this.extensionInstance = extensionInstance;
-    }
+    private HandlerBean handlerBean__;
+    private Class<?> aCLass__;
 
     /**
      * @param o
@@ -26,10 +22,41 @@ public class LazyLoaderHandler implements Handler {
      * @throws Throwable
      */
     public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
-        if (extensionInstance == null) {
-            extensionInstance = extensionClass.newInstance();
+        if (handlerBean__.getInstance() == null) {
+            handlerBean__.setInstance(aCLass__.newInstance());
         }
 
-        return method.invoke(extensionInstance, objects);
+        return method.invoke(handlerBean__.getInstance(), objects);
+    }
+
+    /**
+     *
+     * @param handlerBean
+     */
+    public void setHandlerBean(HandlerBean handlerBean) {
+        handlerBean__ = handlerBean;
+        try {
+            aCLass__ = Class.forName(handlerBean.getDescription().getName(), true, handlerBean.getClassLoader());
+        } catch (Exception e) {
+            handlerBean__.getStatus().setLoadingFailed(true);
+            handlerBean__.getStatus().setLastException(e);
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Collection<Class<?>> getInterfaces() {
+        Collection<Class<?>> interfaces = new ArrayList<Class<?>>();
+
+        try {
+            interfaces.addAll(Arrays.asList(aCLass__.getInterfaces()));
+        } catch (Exception e) {
+            handlerBean__.getStatus().setLoadingFailed(true);
+            handlerBean__.getStatus().setLastException(e);
+        }
+
+        return interfaces;
     }
 }

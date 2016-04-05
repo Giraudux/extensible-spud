@@ -2,7 +2,9 @@ package fr.univ.nantes.extensiblespud;
 
 import fr.univ.nantes.extensiblespud.bean.ConfigurationBean;
 import fr.univ.nantes.extensiblespud.bean.DescriptionBean;
+import fr.univ.nantes.extensiblespud.bean.HandlerBean;
 import fr.univ.nantes.extensiblespud.bean.StatusBean;
+import fr.univ.nantes.extensiblespud.handler.HandlerManager;
 import fr.univ.nantes.extensiblespud.handler.LazyLoaderHandler;
 import fr.univ.nantes.extensiblespud.parser.DescriptionParser;
 import fr.univ.nantes.extensiblespud.parser.DescriptionPropertiesParser;
@@ -39,7 +41,7 @@ public class Platform {
     private Platform() throws MalformedURLException {
         URL url = new URL(configuration.getClassPath());
         URL urls[] = {url};
-        classLoader__ = new URLClassLoader(urls/*, this.getClass().getClassLoader()*/);
+        classLoader__ = new URLClassLoader(urls);
         descriptions__ = new HashMap<String, DescriptionBean>();
         parsers__ = new HashMap<String, DescriptionParser>();
         singletons__ = new HashMap<String, Object>();
@@ -49,11 +51,9 @@ public class Platform {
     }
 
     /**
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws ClassNotFoundException
+     *
      */
-    public void autorun() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+    public void autorun() {
         if (descriptions__.isEmpty()) {
             updateDescriptions();
         }
@@ -66,31 +66,29 @@ public class Platform {
     }
 
     /**
+     *
      * @param name
      * @return
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws ClassNotFoundException
      */
-    public Object loadExtension(String name) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+    public Object loadExtension(String name) {
         return loadExtension(descriptions__.get(name));
     }
 
     /**
      * @param description
      * @return
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
      */
-    private Object loadExtension(DescriptionBean description) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        Class<?> extensionClass = Class.forName(description.getName(), true, classLoader__);
+    private Object loadExtension(DescriptionBean description) {
         Object o = null;
         Object extension = null;
         Object proxy = null;
-        StatusBean status = status__.get(description.getName());
+        StatusBean status = null;
+        Class<?> extensionClass = null;
 
         try {
+            extensionClass = Class.forName(description.getName(), true, classLoader__);
+            status = status__.get(description.getName());
+
             if (!description.getSingleton() || (o = singletons__.get(description.getName())) == null) {
                 if (description.getAutorun() || !description.getProxy()) {
                     extension = extensionClass.newInstance();
@@ -99,7 +97,15 @@ public class Platform {
 
                 if (description.getProxy()) {
                     Class<?>[] interfaces = extensionClass.getInterfaces();
-                    proxy = Proxy.newProxyInstance(classLoader__, interfaces, new LazyLoaderHandler(extensionClass, extension));
+
+
+                    HandlerBean handlerBean = new HandlerBean(description, status, o, classLoader__);
+                    HandlerManager handlerManager = new HandlerManager(handlerBean);
+                    LazyLoaderHandler lazyLoaderHandler = new LazyLoaderHandler();
+
+                    handlerManager.add(lazyLoaderHandler);
+
+                    proxy = Proxy.newProxyInstance(classLoader__, interfaces, handlerManager);
                     o = proxy;
                 }
 
@@ -111,9 +117,10 @@ public class Platform {
             }
         } catch (Exception e) {
             logger.log(Level.WARNING, "can't load \"" + description.getName() + "\" extension: " + e.toString());
-            status.setLoadingFailed(true);
-            status.setLastException(e);
-            //throw e;
+            if(status != null) {
+                status.setLoadingFailed(true);
+                status.setLastException(e);
+            }
         }
 
         return o;
@@ -163,8 +170,8 @@ public class Platform {
      *
      */
     public void updateDescriptions() {
-        //descriptions__ = new HashMap<String, DescriptionBean>();
-        //status__ = new HashMap<String, StatusBean>();
+        /*descriptions__ = new HashMap<String, DescriptionBean>();
+        status__ = new HashMap<String, StatusBean>();*/
         String fileExtension;
         Parser<DescriptionBean> parser;
         DescriptionBean description;
@@ -177,7 +184,7 @@ public class Platform {
         for (File file : listFiles(configuration.getDescriptionPath(), configuration.getRecursive())) {
             fileExtension = getFileExtension(file);
             if ((parser = parsers__.get(fileExtension)) == null) {
-                logger.log(Level.WARNING, "no description parser mapped for the \"" + fileExtension + "\" extension");
+                logger.log(Level.WARNING, "no description parser mapped for the \"" + fileExtension + "\" file extension");
             } else {
                 try {
                     description = parser.parse(new FileInputStream(file));
@@ -202,38 +209,6 @@ public class Platform {
 
         if (update) {
             updateDescriptions();
-        }
-    }
-
-    /**
-     * @param path
-     * @param recursive
-     * @return
-     */
-    private static Collection<File> listFiles(String path, boolean recursive) {
-        Collection<File> files = new ArrayList<File>();
-        listFiles(path, files, recursive);
-        return files;
-    }
-
-    /**
-     * @param path
-     * @param files
-     * @param recursive
-     */
-    private static void listFiles(String path, Collection<File> files, boolean recursive) {
-        File base = new File(path);
-        if (base.isDirectory()) {
-            File listFiles[] = base.listFiles();
-            if (listFiles != null) {
-                for (File file : listFiles) {
-                    if (file.isFile()) {
-                        files.add(file);
-                    } else if (file.isDirectory() && recursive) {
-                        listFiles(file.getPath(), files, recursive);
-                    }
-                }
-            }
         }
     }
 
@@ -282,6 +257,38 @@ public class Platform {
     }
 
     /**
+     * @param path
+     * @param recursive
+     * @return
+     */
+    private static Collection<File> listFiles(String path, boolean recursive) {
+        Collection<File> files = new ArrayList<File>();
+        listFiles(path, files, recursive);
+        return files;
+    }
+
+    /**
+     * @param path
+     * @param files
+     * @param recursive
+     */
+    private static void listFiles(String path, Collection<File> files, boolean recursive) {
+        File base = new File(path);
+        if (base.isDirectory()) {
+            File listFiles[] = base.listFiles();
+            if (listFiles != null) {
+                for (File file : listFiles) {
+                    if (file.isFile()) {
+                        files.add(file);
+                    } else if (file.isDirectory() && recursive) {
+                        listFiles(file.getPath(), files, recursive);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * @param object
      * @return
      * @throws IOException
@@ -297,6 +304,11 @@ public class Platform {
         return oin.readObject();
     }
 
+    /**
+     *
+     * @param file
+     * @return
+     */
     private static String getFileExtension(File file) {
         String fileExtension = "";
         String fileName = file.getName();
@@ -305,22 +317,5 @@ public class Platform {
             fileExtension = fileName.substring(dotIndex + 1);
         }
         return fileExtension;
-    }
-
-    /**
-     * @param fileExtension
-     * @param descriptionParser
-     * @return
-     */
-    public Parser<DescriptionBean> putDescriptionParser(String fileExtension, DescriptionParser descriptionParser) {
-        return parsers__.put(fileExtension, descriptionParser);
-    }
-
-    /**
-     * @param fileExtension
-     * @return
-     */
-    public Parser<DescriptionBean> removeDescriptionParser(String fileExtension) {
-        return parsers__.remove(fileExtension);
     }
 }
