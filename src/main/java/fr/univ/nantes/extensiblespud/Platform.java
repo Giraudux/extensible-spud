@@ -44,16 +44,14 @@ public class Platform {
         descriptions__ = new HashMap<String, DescriptionBean>();
         singletons__ = new HashMap<String, Object>();
         status__ = new HashMap<String, StatusBean>();
-        DescriptionParser parser = new DescriptionPropertiesParser();
         addBaseDescriptions();
+        updateDescriptions();
     }
 
     /**
      *
      */
     public void autorun() {
-        updateDescriptions();
-
         for (DescriptionBean description : descriptions__.values()) {
             if (description.getAutorun()) {
                 loadExtension(description);
@@ -109,6 +107,8 @@ public class Platform {
                 }
 
                 status.setSuccessfullyLoaded(true);
+
+                logger.log(Level.INFO, "load \""+description.getName()+"\" extension");
             }
         } catch (Exception e) {
             logger.log(Level.WARNING, "can't load \"" + description.getName() + "\" extension: " + e.toString());
@@ -127,10 +127,6 @@ public class Platform {
      * @throws ClassNotFoundException
      */
     public Map<String, DescriptionBean> getDescriptions() throws IOException, ClassNotFoundException {
-        if (descriptions__.isEmpty()) {
-            updateDescriptions();
-        }
-
         return (Map<String, DescriptionBean>) copy(descriptions__);
     }
 
@@ -257,6 +253,7 @@ public class Platform {
     private void addBaseDescriptions() {
         DescriptionBean description;
         Collection<String> contributeTo;
+        StatusBean status;
 
         contributeTo = new ArrayList<String>();
         contributeTo.add(DescriptionParser.class.getName());
@@ -265,6 +262,8 @@ public class Platform {
         description.setContributeTo(contributeTo);
         description.setSingleton(true);
         descriptions__.put(description.getName(), description);
+        status = new StatusBean();
+        status__.put(description.getName(), status);
 
         contributeTo = new ArrayList<String>();
         contributeTo.add(Handler.class.getName());
@@ -272,6 +271,8 @@ public class Platform {
         description.setName(LazyLoaderHandler.class.getName());
         description.setContributeTo(contributeTo);
         descriptions__.put(description.getName(), description);
+        status = new StatusBean();
+        status__.put(description.getName(), status);
     }
 
     /**
