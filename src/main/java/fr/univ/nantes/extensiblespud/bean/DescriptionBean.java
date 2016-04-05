@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- *
+ * @author Nina Exposito
+ * @author Alexis Giraudet
+ * @author Jean-Christophe Guérin
+ * @author Jasone Lenormand
  */
 public class DescriptionBean implements Bean {
     private String name;
@@ -16,7 +19,7 @@ public class DescriptionBean implements Bean {
     private Collection<String> dependencies;
 
     /**
-     *
+     * Defaults values are: name = "", description = "", singleton = false, autorun = false, proxies = [], contributeTo = [] and dependencies = [].
      */
     public DescriptionBean() {
         name = "";

@@ -1,4 +1,7 @@
-#
+# Nina Exposito
+# Alexis Giraudet
+# Jean-Christophe Guérin
+# Jasone Lenormand
 
 all:
 	$(MAKE) -C src/main/java && \

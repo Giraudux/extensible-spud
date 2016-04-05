@@ -1,7 +1,10 @@
 package fr.univ.nantes.extensiblespud.bean;
 
 /**
- *
+ * @author Nina Exposito
+ * @author Alexis Giraudet
+ * @author Jean-Christophe Guérin
+ * @author Jasone Lenormand
  */
 public class HandlerBean implements Bean {
     private DescriptionBean description;

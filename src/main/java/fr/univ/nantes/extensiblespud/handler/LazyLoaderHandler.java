@@ -8,7 +8,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- *
+ * @author Nina Exposito
+ * @author Alexis Giraudet
+ * @author Jean-Christophe Guérin
+ * @author Jasone Lenormand
  */
 public class LazyLoaderHandler implements Handler {
     private HandlerBean handlerBean__;

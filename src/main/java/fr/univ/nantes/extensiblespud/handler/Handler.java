@@ -6,7 +6,10 @@ import java.lang.reflect.InvocationHandler;
 import java.util.Collection;
 
 /**
- *
+ * @author Nina Exposito
+ * @author Alexis Giraudet
+ * @author Jean-Christophe Guérin
+ * @author Jasone Lenormand
  */
 public interface Handler extends InvocationHandler {
 

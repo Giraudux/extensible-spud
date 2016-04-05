@@ -1,7 +1,10 @@
 package fr.univ.nantes.extensiblespud.bean;
 
 /**
- *
+ * @author Nina Exposito
+ * @author Alexis Giraudet
+ * @author Jean-Christophe Guérin
+ * @author Jasone Lenormand
  */
 
 public class ConfigurationBean implements Bean {
@@ -10,7 +13,7 @@ public class ConfigurationBean implements Bean {
     private Boolean recursive;
 
     /**
-     *
+     * Defaults values are: classPath = "file://extensions", descriptionPath = "descriptions" and recursive = true.
      */
     public ConfigurationBean() {
         classPath = "file://extensions";

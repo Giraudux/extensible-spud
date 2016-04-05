@@ -10,6 +10,10 @@ import java.util.Properties;
 
 /**
  * @param <T>
+ * @author Nina Exposito
+ * @author Alexis Giraudet
+ * @author Jean-Christophe Guérin
+ * @author Jasone Lenormand
  */
 public abstract class PropertiesParser<T> implements Parser<T> {
     private Class<T> tClass;

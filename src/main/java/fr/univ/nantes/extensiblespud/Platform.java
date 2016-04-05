@@ -23,7 +23,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * @author Nina Exposito
+ * @author Alexis Giraudet
+ * @author Jean-Christophe Guérin
+ * @author Jasone Lenormand
  */
 public class Platform {
     private static Logger logger = Logger.getLogger(Platform.class.getName());
@@ -49,7 +52,7 @@ public class Platform {
     }
 
     /**
-     *
+     * Load all extension description where autorun is true.
      */
     public void autorun() {
         for (DescriptionBean description : descriptions__.values()) {
@@ -60,16 +63,20 @@ public class Platform {
     }
 
     /**
-     * @param name
-     * @return
+     * Load extension by name.
+     *
+     * @param name the name of the extension to load
+     * @return the extension or null on failure
      */
     public Object loadExtension(String name) {
         return loadExtension(descriptions__.get(name));
     }
 
     /**
-     * @param description
-     * @return
+     * Load extension by description.
+     *
+     * @param description the descrirption of the extension to load
+     * @return the extension or null on failure
      */
     private Object loadExtension(DescriptionBean description) {
         Object o = null;
@@ -121,7 +128,9 @@ public class Platform {
     }
 
     /**
-     * @return
+     * List all available extension descriptions.
+     *
+     * @return the list of descriptions
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -130,8 +139,10 @@ public class Platform {
     }
 
     /**
-     * @param contributeTo
-     * @return
+     * List all extension contribution to the given extension.
+     *
+     * @param contributeTo the interface to contribute to
+     * @return the list of contributors
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -148,6 +159,8 @@ public class Platform {
     }
 
     /**
+     * List the status of
+     *
      * @return
      * @throws IOException
      * @throws ClassNotFoundException
@@ -157,7 +170,7 @@ public class Platform {
     }
 
     /**
-     *
+     * Reload descriptions.
      */
     public void updateDescriptions() {
         /*descriptions__ = new HashMap<String, DescriptionBean>();
@@ -206,7 +219,7 @@ public class Platform {
     }
 
     /**
-     * @return
+     * @return the platform instance
      * @throws MalformedURLException
      */
     public static Platform getInstance() throws MalformedURLException {
@@ -222,7 +235,7 @@ public class Platform {
     }
 
     /**
-     * @return
+     * @return the current platform configuration
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -235,7 +248,7 @@ public class Platform {
     }
 
     /**
-     * @param configuration
+     * @param configuration the new platform configuration
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -249,6 +262,9 @@ public class Platform {
         Platform.configuration = (ConfigurationBean) copy(configuration);
     }
 
+    /**
+     *
+     */
     private void addBaseDescriptions() {
         DescriptionBean description;
         Collection<String> contributeTo;

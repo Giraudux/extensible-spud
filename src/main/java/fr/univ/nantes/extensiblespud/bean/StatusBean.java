@@ -3,7 +3,10 @@ package fr.univ.nantes.extensiblespud.bean;
 import java.util.Collection;
 
 /**
- *
+ * @author Nina Exposito
+ * @author Alexis Giraudet
+ * @author Jean-Christophe Guérin
+ * @author Jasone Lenormand
  */
 public class StatusBean implements Bean {
     private Boolean successfullyLoaded;

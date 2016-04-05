@@ -3,7 +3,10 @@ package fr.univ.nantes.extensiblespud.parser;
 import java.io.InputStream;
 
 /**
- *
+ * @author Nina Exposito
+ * @author Alexis Giraudet
+ * @author Jean-Christophe Guérin
+ * @author Jasone Lenormand
  */
 public interface Parser<T> {
 

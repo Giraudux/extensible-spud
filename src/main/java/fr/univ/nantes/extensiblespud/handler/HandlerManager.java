@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- *
+ * @author Nina Exposito
+ * @author Alexis Giraudet
+ * @author Jean-Christophe Guérin
+ * @author Jasone Lenormand
  */
 public class HandlerManager implements InvocationHandler, Handler {
     private Collection<Handler> handlers__;

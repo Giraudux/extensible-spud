@@ -1,4 +1,7 @@
-#
+# Nina Exposito
+# Alexis Giraudet
+# Jean-Christophe Guérin
+# Jasone Lenormand
 
 JAVAC = javac
 sources = fr/univ/nantes/extensiblespud/bean/Bean.java \
