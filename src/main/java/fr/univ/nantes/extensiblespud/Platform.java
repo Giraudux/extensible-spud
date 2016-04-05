@@ -35,7 +35,7 @@ public class Platform {
     private ClassLoader classLoader__;
 
     /**
-     *
+     * @throws MalformedURLException
      */
     private Platform() throws MalformedURLException {
         URL url = new URL(configuration.getClassPath());
@@ -73,8 +73,6 @@ public class Platform {
      */
     private Object loadExtension(DescriptionBean description) {
         Object o = null;
-        Object extension = null;
-        Object proxy = null;
         StatusBean status = null;
         Class<?> extensionClass = null;
 
@@ -83,23 +81,23 @@ public class Platform {
             status = status__.get(description.getName());
 
             if (!description.getSingleton() || (o = singletons__.get(description.getName())) == null) {
-                if (description.getAutorun() || !description.getProxy()) {
-                    extension = extensionClass.newInstance();
-                    o = extension;
+                if (description.getAutorun() || description.getProxies().isEmpty()) {
+                    o = extensionClass.newInstance();
                 }
 
-                if (description.getProxy()) {
-                    Class<?>[] interfaces = extensionClass.getInterfaces();
-
-
+                if (!description.getProxies().isEmpty()) {
                     HandlerBean handlerBean = new HandlerBean(description, status, o, classLoader__);
                     HandlerManager handlerManager = new HandlerManager(handlerBean);
-                    LazyLoaderHandler lazyLoaderHandler = new LazyLoaderHandler();
+                    Collection<Class<?>> interfaces;
+                    Handler handler;
 
-                    handlerManager.add(lazyLoaderHandler);
+                    for (String proxy : description.getProxies()) {
+                        handler = (Handler) loadExtension(proxy);
+                        handlerManager.add(handler);
+                    }
 
-                    proxy = Proxy.newProxyInstance(classLoader__, interfaces, handlerManager);
-                    o = proxy;
+                    interfaces = handlerManager.getInterfaces();
+                    o = Proxy.newProxyInstance(classLoader__, interfaces.toArray(new Class<?>[interfaces.size()]), handlerManager);
                 }
 
                 if (description.getSingleton()) {
@@ -108,9 +106,10 @@ public class Platform {
 
                 status.setSuccessfullyLoaded(true);
 
-                logger.log(Level.INFO, "load \""+description.getName()+"\" extension");
+                logger.log(Level.INFO, "load \"" + description.getName() + "\" extension");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             logger.log(Level.WARNING, "can't load \"" + description.getName() + "\" extension: " + e.toString());
             if (status != null) {
                 status.setLoadingFailed(true);

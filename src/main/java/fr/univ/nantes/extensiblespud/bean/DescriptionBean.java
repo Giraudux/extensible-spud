@@ -11,7 +11,7 @@ public class DescriptionBean implements Bean {
     private String description;
     private Boolean singleton;
     private Boolean autorun;
-    private Boolean proxy;
+    private Collection<String> proxies;
     private Collection<String> contributeTo;
     private Collection<String> dependencies;
 
@@ -23,7 +23,7 @@ public class DescriptionBean implements Bean {
         description = "";
         singleton = false;
         autorun = false;
-        proxy = false;
+        proxies = new ArrayList<String>();
         contributeTo = new ArrayList<String>();
         dependencies = new ArrayList<String>();
     }
@@ -60,12 +60,12 @@ public class DescriptionBean implements Bean {
         this.autorun = autorun;
     }
 
-    public Boolean getProxy() {
-        return proxy;
+    public Collection<String> getProxies() {
+        return proxies;
     }
 
-    public void setProxy(Boolean proxy) {
-        this.proxy = proxy;
+    public void setProxies(Collection<String> proxies) {
+        this.proxies = proxies;
     }
 
     public Collection<String> getContributeTo() {

@@ -67,7 +67,12 @@ public abstract class PropertiesParser<T> implements Parser<T> {
                         } else if (parameterType.equals(String.class)) {
                             method.invoke(t, properties.getProperty(key));
                         } else if (parameterType.equals(Collection.class)) {
-                            Collection<String> c = Arrays.asList(properties.getProperty(key).replace("[", "").replace("]", "").split("\\s*,\\s*"));
+                            Collection<String> c = Arrays.asList(properties.getProperty(key).replace("[", "").replace("]", "").replace(" ", "").split(","));
+                            for (String s : c) {
+                                if (s.isEmpty()) {
+                                    c.remove(s);
+                                }
+                            }
                             method.invoke(t, c);
                         }
 
